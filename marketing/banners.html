@@ -1,0 +1,293 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Launch Banners</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#D71921;--ink:#0E0E0E;--sur:#1B1B1B;--sur2:#262626;--w:#F2F2F2;--g:#8A8A8A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#555;font-family:'Space Mono',monospace;color:var(--w);display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+.banner{position:relative;overflow:hidden;flex:none}
+.label{font-size:12px;letter-spacing:.22em;color:var(--g);text-transform:uppercase}
+.grot{font-family:'Space Grotesk',sans-serif}
+.chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;font-size:14px;letter-spacing:.12em}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block}
+.gridbg{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 1.6px,transparent 1.8px);background-size:22px 22px}
+.gridbg.light{background-image:radial-gradient(rgba(0,0,0,.07) 1.6px,transparent 1.8px)}
+.blocks{position:absolute;inset:0}
+.blocks i{position:absolute;border-radius:48px;background:#171717;border:1px solid rgba(255,255,255,.06)}
+.disclaimer{position:absolute;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.35)}
+
+/* ---- phone mockup ---- */
+.phone{width:300px;height:640px;border-radius:46px;background:#E9E9E9;padding:9px;box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 0 0 2px #fff;position:relative;flex:none}
+.phone.darkframe{background:#2A2A2A;box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 0 0 2px #3a3a3a}
+.scr{width:100%;height:100%;border-radius:38px;overflow:hidden;position:relative;background:var(--ink);padding:34px 16px 16px}
+.scr.light{background:#EDEDED;color:#111}
+.sb{position:absolute;top:12px;left:24px;right:20px;display:flex;justify-content:space-between;font-size:10px;opacity:.85}
+.hole{position:absolute;top:12px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#000}
+.row{display:flex;gap:10px}
+.c{width:52px;height:52px;border-radius:50%;background:var(--w);display:flex;align-items:center;justify-content:center;flex:none}
+.light .c{background:#fff;box-shadow:0 0 0 1px #ddd}
+.c svg{width:22px;height:22px}
+.pill{height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;flex:1}
+.wid{border-radius:24px;background:var(--sur)}
+.light .wid{background:#fff}
+.search{position:absolute;left:16px;right:16px;bottom:18px;height:42px;border-radius:999px;background:var(--w);display:flex;align-items:center;justify-content:space-between;padding:0 5px 0 16px}
+.light .search{background:#111}
+.search b{background:var(--ink);color:var(--w);border-radius:999px;font-size:8px;letter-spacing:.15em;padding:9px 12px;font-weight:400;display:flex;gap:6px;align-items:center}
+.light .search b{background:#EDEDED;color:#111}
+.tile{width:54px;height:54px;border-radius:50%;background:var(--sur);display:flex;align-items:center;justify-content:center}
+.tile.on{background:var(--red)}
+.tile svg{width:22px;height:22px}
+.ncard{background:var(--sur);border-radius:18px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
+.ncard .ic{width:24px;height:24px;border-radius:50%;background:var(--w);flex:none}
+.ncard small{display:block;font-size:7.5px;letter-spacing:.14em;color:var(--g)}
+.ncard p{font-size:10px;font-weight:700;margin-top:3px}
+.ncard span{font-size:9px;color:var(--g)}
+</style></head>
+<body>
+<div id="out"></div>
+<script>
+const APP = "NOTHING LAUNCHER";           // change the product name in one place
+const GL = {
+'0':["01110","10001","10011","10101","11001","10001","01110"],'1':["00100","01100","00100","00100","00100","00100","01110"],
+'2':["01110","10001","00001","00010","00100","01000","11111"],'3':["11111","00010","00100","00010","00001","10001","01110"],
+'4':["00010","00110","01010","10010","11111","00010","00010"],'5':["11111","10000","11110","00001","00001","10001","01110"],
+'6':["00110","01000","10000","11110","10001","10001","01110"],'7':["11111","00001","00010","00100","01000","01000","01000"],
+'8':["01110","10001","10001","01110","10001","10001","01110"],'9':["01110","10001","10001","01111","00001","00010","01100"],
+A:["01110","10001","10001","11111","10001","10001","10001"],B:["11110","10001","10001","11110","10001","10001","11110"],
+C:["01110","10001","10000","10000","10000","10001","01110"],D:["11100","10010","10001","10001","10001","10010","11100"],
+E:["11111","10000","10000","11110","10000","10000","11111"],F:["11111","10000","10000","11110","10000","10000","10000"],
+G:["01110","10001","10000","10111","10001","10001","01111"],H:["10001","10001","10001","11111","10001","10001","10001"],
+I:["01110","00100","00100","00100","00100","00100","01110"],J:["00111","00010","00010","00010","00010","10010","01100"],
+K:["10001","10010","10100","11000","10100","10010","10001"],L:["10000","10000","10000","10000","10000","10000","11111"],
+M:["10001","11011","10101","10101","10001","10001","10001"],N:["10001","10001","11001","10101","10011","10001","10001"],
+O:["01110","10001","10001","10001","10001","10001","01110"],P:["11110","10001","10001","11110","10000","10000","10000"],
+Q:["01110","10001","10001","10001","10101","10010","01101"],R:["11110","10001","10001","11110","10100","10010","10001"],
+S:["01111","10000","10000","01110","00001","00001","11110"],T:["11111","00100","00100","00100","00100","00100","00100"],
+U:["10001","10001","10001","10001","10001","10001","01110"],V:["10001","10001","10001","10001","10001","01010","00100"],
+W:["10001","10001","10001","10101","10101","10101","01010"],X:["10001","10001","01010","00100","01010","10001","10001"],
+Y:["10001","10001","10001","01010","00100","00100","00100"],Z:["11111","00001","00010","00100","01000","10000","11111"],
+':':["00000","00100","00100","00000","00100","00100","00000"],'%':["11000","11001","00010","00100","01000","10011","00011"],
+'.':["00000","00000","00000","00000","00000","01100","01100"],'-':["00000","00000","00000","11111","00000","00000","00000"],
+'/':["00000","00001","00010","00100","01000","10000","00000"],'×':["00000","10001","01010","00100","01010","10001","00000"],
+' ':["00000","00000","00000","00000","00000","00000","00000"]};
+/* Same algorithm as DotMatrix.kt: 5x7 cells, one blank column between glyphs, dot radius 40% of pitch. */
+function dots(text,p,color,ghost,accentIdx,accent){
+  const cols=text.length*6-1, w=cols*p, h=7*p; let s=`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;overflow:visible">`;
+  [...text].forEach((ch,gi)=>{const g=GL[ch]||GL[' '];for(let r=0;r<7;r++)for(let c=0;c<5;c++){const on=g[r][c]==='1';
+    let col=on?color:ghost; if(on&&accentIdx!=null&&accentIdx(gi,r,c))col=accent; if(!col)continue;
+    s+=`<circle cx="${(gi*6+c)*p+p/2}" cy="${r*p+p/2}" r="${p*.4}" fill="${col}"/>`;}});
+  return s+'</svg>';
+}
+const I = { // tiny monochrome glyphs for app circles
+ phone:'<path d="M6 3h3l1.5 4-2 1.2a11 11 0 0 0 5.3 5.3L15 11.5l4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 4 5a2 2 0 0 1 2-2z" fill="currentColor"/>',
+ cam:'<rect x="3" y="7" width="18" height="12" rx="3" fill="currentColor"/><rect x="8" y="4.5" width="8" height="4" rx="1.5" fill="currentColor"/><circle cx="12" cy="13" r="3.2" fill="#fff"/>',
+ chat:'<path d="M4 5h16v10H9l-5 4z" fill="currentColor"/>',
+ play:'<path d="M8 5l11 7-11 7z" fill="currentColor"/>',
+ music:'<path d="M9 17V6l10-2v11" stroke="currentColor" stroke-width="2.2" fill="none"/><circle cx="7" cy="17" r="2.6" fill="currentColor"/><circle cx="17" cy="15" r="2.6" fill="currentColor"/>',
+ gear:'<circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-dasharray="3 2.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
+ img:'<rect x="3" y="5" width="18" height="14" rx="3" fill="currentColor"/><path d="M6 16l4-5 3 3 2-2 3 4z" fill="#fff"/>',
+ mail:'<rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/><path d="M4 7l8 6 8-6" stroke="#fff" stroke-width="1.6" fill="none"/>',
+ globe:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+ pin:'<path d="M12 3a6 6 0 0 1 6 6c0 5-6 12-6 12S6 14 6 9a6 6 0 0 1 6-6z" fill="currentColor"/><circle cx="12" cy="9" r="2.2" fill="#fff"/>',
+ wifi:'<path d="M3 9a13 13 0 0 1 18 0M6 12.5a8.5 8.5 0 0 1 12 0M9 16a4 4 0 0 1 6 0" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/>',
+ bt:'<path d="M7 7l10 10-5 4V3l5 4L7 17" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>',
+ torch:'<path d="M8 3h8v4l-2 3v11h-4V10L8 7z" fill="currentColor"/>',
+ moon:'<path d="M15 3a9 9 0 1 0 6 13A7 7 0 0 1 15 3z" fill="currentColor"/>',
+ rot:'<rect x="7" y="3" width="10" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>',
+ plane:'<path d="M21 15l-8-3V5a1.5 1.5 0 0 0-3 0v7l-8 3v2l8-2v4l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-4l8 2z" fill="currentColor"/>',
+ loc:'<path d="M12 3a6 6 0 0 1 6 6c0 5-6 12-6 12S6 14 6 9a6 6 0 0 1 6-6z" fill="currentColor"/>',
+ sun:'<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" stroke="currentColor" stroke-width="2"/>',
+ search:'<circle cx="10" cy="10" r="6" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.4"/>'
+};
+const ic=(n,c='#0E0E0E')=>`<svg viewBox="0 0 24 24" style="color:${c}">${I[n]}</svg>`;
+const circle=(n,light)=>`<div class="c">${ic(n,'#0E0E0E')}</div>`;
+
+function homeScreen(light){
+  const fg=light?'#111':'#F2F2F2', sur=light?'#fff':'#1B1B1B', sur2=light?'#E0E0E0':'#262626';
+  const seg=[...Array(12)].map((_,i)=>`<i style="flex:1;height:100%;border-radius:2px;background:${i<9?fg:sur2}"></i>`).join('');
+  return `<div class="scr ${light?'light':''}">
+   <div class="gridbg ${light?'light':''}" style="background-size:18px 18px"></div>
+   <div class="sb"><span>17:39</span><span>▲ ▮ 75%</span></div><div class="hole"></div>
+   <div style="position:relative">
+    <div class="label" style="font-size:7px;color:${light?'#6b6b6b':'#8a8a8a'}">WELCOME BACK</div>
+    <div style="margin:7px 0 7px">${dots('GOOD EVENING',2.2,fg)}</div>
+    <div style="font-size:7.4px;line-height:1.45;opacity:.75">Battery temp is 31°C, level is 75%,<br>and the status is discharging.</div>
+    <div class="row" style="margin-top:12px">
+      <div class="pill" style="background:#D71921;color:#fff;gap:6px">${dots('.',1.6,'#fff')}949.74MB</div>
+      <div class="pill" style="background:${light?'#111':'#F2F2F2'};color:${light?'#fff':'#111'}">15 OCT 2026</div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div style="display:grid;grid-template-columns:52px 52px;gap:10px">${circle('phone')}${circle('chat')}${circle('cam')}${circle('globe')}</div>
+      <div class="wid" style="flex:1;padding:12px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="font-size:7px;letter-spacing:.2em">BATTERY</div>
+        <div style="height:22px;border:1.6px solid ${fg};border-radius:5px;padding:3px;display:flex;gap:2px">${seg}</div>
+        <div style="display:flex;align-items:flex-end;gap:3px">${dots('75',2.6,fg)}<span style="font-size:9px">%</span></div>
+        <div style="font-size:6px;color:#D71921;letter-spacing:.12em">DISCHARGING · 31°C</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div style="width:114px;height:114px;border-radius:24px;background:#D71921;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px">
+        ${dots('17',4.4,'#fff','rgba(255,255,255,.13)')}${dots('39',4.4,'#fff','rgba(255,255,255,.13)')}</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div class="row">${circle('music')}${circle('img')}</div>
+        <div class="pill" style="flex:none;height:42px;background:${sur};color:${fg};font-size:8px;gap:7px;justify-content:flex-start;padding-left:8px">
+          <span style="width:22px;height:22px;border-radius:50%;background:${light?'#111':'#F2F2F2'};display:inline-block"></span>Do Not Disturb</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">${circle('gear')}${circle('mail')}${circle('pin')}${circle('play')}</div>
+   </div>
+   <div class="search"><span style="width:16px;height:16px;color:${light?'#fff':'#111'}">${ic('search',light?'#fff':'#111')}</span><b><span class="dot" style="width:5px;height:5px"></span>SEARCH</b></div>
+  </div>`;
+}
+function shadeScreen(){
+  const t=(n,on)=>`<div class="tile ${on?'on':''}">${ic(n,'#F2F2F2')}</div>`;
+  return `<div class="scr" style="padding-top:38px">
+   <div class="hole"></div>
+   <div style="display:flex;align-items:flex-end;justify-content:space-between">
+     <div>${dots('17:39',4.2,'#F2F2F2')}<div style="font-size:8px;color:#8a8a8a;margin-top:7px">THU, 15 OCT · 75%</div></div>
+     <div class="row" style="gap:6px"><div class="tile" style="width:30px;height:30px">${ic('gear','#F2F2F2')}</div><div class="tile on" style="width:30px;height:30px"></div></div>
+   </div>
+   <div class="row" style="margin-top:14px;gap:8px">
+     <div style="flex:1;height:48px;border-radius:24px;background:#D71921;display:flex;align-items:center;gap:7px;padding:0 7px">
+       <div style="width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center">${ic('wifi','#D71921').replace('<svg','<svg width=18 height=18')}</div>
+       <div style="font-size:9px;font-weight:700">Internet<br><span style="font-weight:400;font-size:8px">Wi-Fi on</span></div></div>
+     <div style="flex:1;height:48px;border-radius:24px;background:#1B1B1B;display:flex;align-items:center;gap:7px;padding:0 7px">
+       <div style="width:34px;height:34px;border-radius:50%;background:#262626;display:flex;align-items:center;justify-content:center">${ic('bt','#F2F2F2').replace('<svg','<svg width=18 height=18')}</div>
+       <div style="font-size:9px;font-weight:700">Bluetooth<br><span style="font-weight:400;font-size:8px;color:#8a8a8a">Off</span></div></div>
+   </div>
+   <div style="display:grid;grid-template-columns:repeat(4,54px);justify-content:space-between;row-gap:12px;margin-top:14px">
+     ${t('torch',true)}${t('moon')}${t('music')}${t('rot',true)}${t('plane')}${t('loc',true)}${t('sun')}${t('img')}
+   </div>
+   <div class="row" style="margin-top:14px;gap:8px">
+     <div style="flex:1;height:46px;border-radius:23px;background:#1B1B1B;overflow:hidden"><div style="width:68%;height:100%;border-radius:23px;background:#F2F2F2;display:flex;justify-content:flex-end;align-items:center;padding-right:12px">${ic('sun','#0E0E0E').replace('<svg','<svg width=16 height=16')}</div></div>
+     <div class="tile" style="width:46px;height:46px;font-size:11px;font-weight:700">A</div>
+   </div>
+   <div class="label" style="font-size:7px;margin:16px 0 8px">NOTIFICATIONS</div>
+   <div style="display:flex;flex-direction:column;gap:7px">
+     <div class="ncard"><div class="ic"></div><div><small>MESSAGES · NOW</small><p>Studio group</p><span>Launch is tonight. Banners ready?</span></div></div>
+     <div class="ncard"><div class="ic"></div><div><small>CALENDAR · 2M</small><p>Ship v1.0</p><span>18:00 – 18:30</span></div></div>
+     <div class="ncard"><div class="ic"></div><div><small>MUSIC · 5M</small><p>Now playing</p><span>Dot Matrix — Side A</span></div></div>
+   </div>
+   <div style="position:absolute;bottom:12px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:4px;background:#8a8a8a"></div>
+  </div>`;
+}
+const phone=(inner,dark)=>`<div class="phone ${dark?'darkframe':''}">${inner}</div>`;
+const blocks=(arr)=>`<div class="blocks">${arr.map(([l,t,w,h,c])=>`<i style="left:${l}px;top:${t}px;width:${w}px;height:${h}px;${c?`background:${c}`:''}"></i>`).join('')}</div>`;
+const disc=(css,col)=>`<div class="disclaimer" style="${css};${col?`color:${col}`:''}">UNOFFICIAL · INSPIRED BY NOTHING OS</div>`;
+
+const B = [];
+
+/* 1 — X / Twitter header 1500x500 */
+B.push(['01-x-header-1500x500',1500,500,`
+ <div style="position:absolute;inset:0;background:#0E0E0E"></div>
+ ${blocks([[880,-120,520,420],[1120,230,460,380,'#1D1D1D'],[-120,330,500,300]])}<div class="gridbg"></div>
+ <div style="position:absolute;left:330px;top:58px">
+   <div class="label"><span class="dot" style="margin-right:10px"></span>Introducing</div>
+   <div style="margin-top:26px">${dots('NOTHING',9.5,'#F2F2F2',null)}</div>
+   <div style="margin-top:20px">${dots('LAUNCHER',9.5,'#F2F2F2',null,(g)=>g===7,'#D71921')}</div>
+   <div class="grot" style="margin-top:26px;font-size:20px;color:#bdbdbd;max-width:500px;line-height:1.4">A dot-matrix home screen, app drawer and pull-down panel for Android.</div>
+   <div class="disclaimer" style="position:static;margin-top:22px">UNOFFICIAL · INSPIRED BY NOTHING OS</div>
+ </div>
+ <div style="position:absolute;right:270px;top:46px;transform:rotate(-8deg) scale(.82);transform-origin:top center">${phone(homeScreen(false))}</div>
+ <div style="position:absolute;right:40px;top:80px;transform:rotate(7deg) scale(.82);transform-origin:top center">${phone(shadeScreen(),true)}</div>
+`]);
+
+/* 2 — Google Play feature graphic 1024x500 */
+B.push(['02-play-feature-1024x500',1024,500,`
+ <div style="position:absolute;inset:0;background:#D71921"></div>
+ <div class="gridbg" style="background-image:radial-gradient(rgba(255,255,255,.13) 2px,transparent 2.3px);background-size:24px 24px"></div>
+ <div style="position:absolute;left:70px;top:70px">${dots('07',22,'#fff','rgba(255,255,255,.14)')}<div style="height:30px"></div>${dots('59',22,'#fff','rgba(255,255,255,.14)')}</div>
+ <div style="position:absolute;left:520px;top:120px;width:440px">
+   <div class="label" style="color:rgba(255,255,255,.75)">Android launcher</div>
+   <div class="grot" style="font-size:58px;font-weight:700;line-height:1.02;margin-top:16px;color:#fff">Your home,<br>in dots.</div>
+   <div style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap">
+     <span class="chip" style="background:#fff;color:#0E0E0E">HOME</span><span class="chip" style="background:#0E0E0E;color:#fff">PANEL</span><span class="chip" style="border:1.5px solid #fff;color:#fff">DRAWER</span></div>
+ </div>
+ ${disc('right:30px;bottom:22px','rgba(255,255,255,.6)')}`]);
+
+/* 3 — How we made it 1080x1080 */
+const step=(n,t,d)=>`<div style="display:flex;gap:26px;align-items:flex-start">
+  <div style="width:64px;height:64px;border-radius:50%;background:#D71921;display:flex;align-items:center;justify-content:center;flex:none">${dots(n,4.4,'#fff')}</div>
+  <div><div style="font-size:24px;font-weight:700;letter-spacing:.08em">${t}</div><div class="grot" style="font-size:21px;color:#a8a8a8;margin-top:6px;line-height:1.4">${d}</div></div></div>`;
+B.push(['03-how-we-made-it-1080x1080',1080,1080,`
+ <div style="position:absolute;inset:0;background:#0E0E0E"></div><div class="gridbg"></div>
+ <div style="position:absolute;left:80px;top:84px;right:80px">
+   <div class="label">${APP} · Build log</div>
+   <div style="margin-top:24px">${dots('HOW WE',10,'#F2F2F2')}</div>
+   <div style="margin-top:16px">${dots('MADE IT',10,'#F2F2F2',null,(g,r,c)=>g===6,'#D71921')}</div>
+   <div style="margin-top:70px;display:flex;flex-direction:column;gap:58px">
+    ${step('01','RESEARCH','Pinterest home-screen setups and Nothing OS 3 &amp; 4 reviews. Red, white, black. Circles and pills.')}
+    ${step('02','DRAW THE FONT','No font files. Every letter is a 5×7 grid of dots, typed out in Kotlin.')}
+    ${step('03','BUILD','Kotlin + Jetpack Compose. Home, app drawer, quick settings, notifications.')}
+    ${step('04','MAKE IT FAST','Panels follow your finger 1:1, then spring to your flick speed.')}
+   </div>
+ </div>
+ <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:#F2F2F2;color:#0E0E0E;display:flex;align-items:center;justify-content:space-around;padding:0 40px">
+   ${[['19','KOTLIN FILES'],['2912','LINES'],['2.1','MB APK'],['0','FONT FILES']].map(([a,b])=>`<div style="display:flex;align-items:center;gap:14px">${dots(a,5,'#0E0E0E')}<span style="font-size:13px;letter-spacing:.16em">${b}</span></div>`).join('')}
+ </div>`]);
+
+/* 4 — The font, 1080x1080 */
+const big = (()=>{const g=GL['N'],p=86;let s=`<svg width="${5*p}" height="${7*p}">`;for(let r=0;r<7;r++)for(let c=0;c<5;c++){const on=g[r][c]==='1';
+  s+=`<circle cx="${c*p+p/2}" cy="${r*p+p/2}" r="${p*.4}" fill="${on?(r===3&&c===2?'#D71921':'#F2F2F2'):'none'}" stroke="${on?'none':'rgba(255,255,255,.18)'}" stroke-width="2" stroke-dasharray="${on?'':'4 6'}"/>`;}
+  return s+'</svg>';})();
+B.push(['04-dot-font-1080x1080',1080,1080,`
+ <div style="position:absolute;inset:0;background:#0E0E0E"></div>
+ <div style="position:absolute;left:80px;top:80px">
+   <div class="label">How the type works</div>
+   <div class="grot" style="font-size:56px;font-weight:700;line-height:1.05;margin-top:18px">43 glyphs.<br><span style="color:#D71921">0 font files.</span></div>
+ </div>
+ <div style="position:absolute;left:80px;top:330px">${big}</div>
+ <div style="position:absolute;left:580px;top:350px;width:430px;background:#1B1B1B;border-radius:28px;padding:30px;font-size:17px;line-height:1.75;color:#cfcfcf">
+   <div class="label" style="margin-bottom:14px">DotMatrix.kt</div>
+   <span style="color:#8a8a8a">'N'</span> to rows(<br>
+   ${GL['N'].map((r,i)=>`&nbsp;&nbsp;<span style="color:${i===3?'#ff5a60':'#F2F2F2'}">"${r}"</span>,`).join('<br>')}<br>)
+ </div>
+ <div style="position:absolute;left:580px;top:860px;width:430px" class="grot"><div style="font-size:20px;color:#a8a8a8;line-height:1.45">Each 1 is a lit dot. The launcher draws every clock, greeting and percentage dot by dot.</div></div>
+ ${disc('left:80px;bottom:40px')}`]);
+
+/* 5 — Light / Dark 1080x1080 */
+B.push(['05-light-dark-1080x1080',1080,1080,`
+ <div style="position:absolute;left:0;top:0;bottom:0;width:540px;background:#0E0E0E"></div>
+ <div style="position:absolute;right:0;top:0;bottom:0;width:540px;background:#EDEDED"></div>
+ <div style="position:absolute;left:0;right:0;top:70px;display:flex;justify-content:center;gap:0">
+   <div style="width:540px;display:flex;justify-content:center">${dots('DARK',8,'#F2F2F2')}</div>
+   <div style="width:540px;display:flex;justify-content:center">${dots('LIGHT',8,'#0E0E0E')}</div></div>
+ <div style="position:absolute;left:120px;top:200px">${phone(homeScreen(false),true)}</div>
+ <div style="position:absolute;right:120px;top:200px">${phone(homeScreen(true))}</div>
+ <div style="position:absolute;left:50%;top:0;bottom:0;width:4px;margin-left:-2px;background:#D71921"></div>
+ <div style="position:absolute;left:50%;bottom:64px;transform:translateX(-50%);background:#D71921;color:#fff" class="chip">DARK · LIGHT · SYSTEM</div>`]);
+
+/* 6 — Story 1080x1920 */
+B.push(['06-story-1080x1920',1080,1920,`
+ <div style="position:absolute;inset:0;background:#0E0E0E"></div>
+ ${blocks([[-160,260,620,700],[640,1100,600,700,'#1D1D1D']])}<div class="gridbg" style="background-size:30px 30px"></div>
+ <div style="position:absolute;left:0;right:0;top:150px;display:flex;flex-direction:column;align-items:center">
+   <div class="label" style="font-size:18px">${APP}</div>
+   <div style="margin-top:40px">${dots('SWIPE',16,'#F2F2F2')}</div>
+   <div style="margin-top:26px">${dots('DOWN.',16,'#F2F2F2',null,(g)=>g===4,'#D71921')}</div>
+   <div class="grot" style="margin-top:40px;font-size:34px;color:#bdbdbd">The panel follows your finger.</div>
+ </div>
+ <div style="position:absolute;left:50%;top:720px;transform:translateX(-50%) scale(1.45);transform-origin:top center">${phone(shadeScreen(),true)}</div>
+ <div style="position:absolute;left:50%;bottom:110px;transform:translateX(-50%);display:flex;gap:16px">
+   <span class="chip" style="background:#D71921;color:#fff;font-size:24px;padding:22px 40px">GET THE APK</span></div>`]);
+
+/* 7 — LinkedIn banner 1584x396 (light) */
+B.push(['07-linkedin-1584x396',1584,396,`
+ <div style="position:absolute;inset:0;background:#EDEDED"></div><div class="gridbg light"></div>
+ <div style="position:absolute;left:470px;top:76px;color:#111">
+   <div class="label" style="color:#6b6b6b">Side project · shipped</div>
+   <div class="grot" style="font-size:44px;font-weight:700;margin-top:14px;line-height:1.08">I built a dot-matrix<br>Android launcher from scratch.</div>
+   <div style="display:flex;gap:0;margin-top:30px;align-items:center">
+     ${['RESEARCH','DESIGN','BUILD','TUNE','SHIP'].map((s,i)=>`<div style="display:flex;align-items:center"><span class="chip" style="${i===4?'background:#D71921;color:#fff':'background:#111;color:#fff'};font-size:13px">${s}</span>${i<4?'<span style="width:34px;height:2px;background:#111;display:inline-block"></span>':''}</div>`).join('')}
+   </div>
+ </div>
+ <div style="position:absolute;right:120px;top:34px;transform:rotate(6deg) scale(.68);transform-origin:top right">${phone(homeScreen(true))}</div>
+ <div style="position:absolute;right:420px;top:40px">${dots('KOTLIN',3.4,'#111')}</div>`]);
+
+const out=document.getElementById('out');
+B.forEach(([id,w,h,html])=>{const d=document.createElement('div');d.className='banner';d.id=id;d.style.width=w+'px';d.style.height=h+'px';d.innerHTML=html;out.appendChild(d);});
+out.style.cssText='display:flex;flex-direction:column;gap:40px';
+window.BANNERS=B.map(b=>b[0]);
+</script>
+</body></html>
