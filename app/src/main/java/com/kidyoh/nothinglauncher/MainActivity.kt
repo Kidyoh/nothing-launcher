@@ -2,23 +2,22 @@ package com.kidyoh.nothinglauncher
 
 import android.app.role.RoleManager
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +25,8 @@ import com.kidyoh.nothinglauncher.data.AppRepository
 import com.kidyoh.nothinglauncher.data.Prefs
 import com.kidyoh.nothinglauncher.service.QuickSettings
 import com.kidyoh.nothinglauncher.service.ShadeAccessibilityService
+import com.kidyoh.nothinglauncher.ui.components.SheetLayer
+import com.kidyoh.nothinglauncher.ui.components.SheetState
 import com.kidyoh.nothinglauncher.ui.drawer.AppDrawer
 import com.kidyoh.nothinglauncher.ui.home.HomeActions
 import com.kidyoh.nothinglauncher.ui.home.HomeScreen
@@ -33,12 +34,13 @@ import com.kidyoh.nothinglauncher.ui.home.NothingBackground
 import com.kidyoh.nothinglauncher.ui.shade.ShadeHost
 import com.kidyoh.nothinglauncher.ui.shade.ShadePanel
 import com.kidyoh.nothinglauncher.ui.theme.NothingTheme
+import com.kidyoh.nothinglauncher.ui.theme.rememberIsDark
 
 class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
 
-    private var drawerOpen by mutableStateOf(false)
-    private var drawerSearch by mutableStateOf(false)
-    private var shadeOpen by mutableStateOf(false)
+    private lateinit var drawer: SheetState
+    private lateinit var shade: SheetState
+    private var searchRequest by mutableIntStateOf(0)
 
     // After the "set as default home app" dialog, continue with the rest of the setup once.
     private val roleRequest = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -57,7 +59,16 @@ class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
         }
 
         setContent {
+            val scope = rememberCoroutineScope()
+            drawer = remember { SheetState(scope) }
+            shade = remember { SheetState(scope) }
             NothingTheme {
+                val dark = rememberIsDark()
+                LaunchedEffect(dark) {
+                    val bars = if (dark) SystemBarStyle.dark(Color.TRANSPARENT)
+                    else SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+                }
                 val apps by AppRepository.apps.collectAsStateWithLifecycle()
                 val systemWallpaper by Prefs.systemWallpaper.collectAsStateWithLifecycle()
                 // Seed the home screen with sensible apps on first run.
@@ -69,18 +80,11 @@ class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
                 Box(Modifier.fillMaxSize()) {
                     if (!systemWallpaper) NothingBackground()
                     HomeScreen(this@MainActivity)
-                    AnimatedVisibility(
-                        visible = drawerOpen,
-                        enter = slideInVertically { it / 3 } + fadeIn(),
-                        exit = slideOutVertically { it / 3 } + fadeOut(),
-                    ) { AppDrawer(drawerSearch, onClose = { drawerOpen = false }) }
-                    AnimatedVisibility(
-                        visible = shadeOpen,
-                        enter = slideInVertically { -it / 3 } + fadeIn(),
-                        exit = slideOutVertically { -it / 3 } + fadeOut(),
-                    ) { ShadePanel(this@MainActivity) }
+                    // Both panels stay composed so opening them never has to build the UI first.
+                    SheetLayer(drawer, fromTop = false) { AppDrawer(drawer, searchRequest) }
+                    SheetLayer(shade, fromTop = true) { ShadePanel(this@MainActivity, shade) }
                 }
-                BackHandler(enabled = drawerOpen || shadeOpen) { closeOverlays() }
+                BackHandler(enabled = drawer.isOpen || shade.isOpen) { closeOverlays() }
             }
         }
     }
@@ -96,9 +100,16 @@ class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
         if (Intent.ACTION_MAIN == intent.action) closeOverlays()
     }
 
+    /** Leaving home (launching an app) resets the panels instantly, so returning shows home. */
+    override fun onStop() {
+        super.onStop()
+        if (::drawer.isInitialized) { drawer.snapClosed(); shade.snapClosed() }
+    }
+
     private fun closeOverlays() {
-        drawerOpen = false
-        shadeOpen = false
+        if (!::drawer.isInitialized) return
+        drawer.close()
+        shade.close()
     }
 
     private fun isDefaultLauncher(): Boolean {
@@ -118,8 +129,18 @@ class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
     }
 
     // HomeActions
-    override fun openDrawer(search: Boolean) { drawerSearch = search; shadeOpen = false; drawerOpen = true }
-    override fun openShade() { QuickSettings.refresh(this); drawerOpen = false; shadeOpen = true }
+    override fun openDrawer(search: Boolean) {
+        if (search) searchRequest++
+        shade.close()
+        drawer.open()
+    }
+    override fun dragDrawer(deltaPx: Float) = drawer.dragBy(deltaPx)
+    override fun settleDrawer(velocityPx: Float) = drawer.settle(velocityPx)
+    override fun dragShade(deltaPx: Float) {
+        if (shade.value == 0f) QuickSettings.refresh(this)
+        shade.dragBy(deltaPx)
+    }
+    override fun settleShade(velocityPx: Float) = shade.settle(velocityPx)
     override fun openSettings() { startActivity(Intent(this, SetupActivity::class.java)) }
     override fun lockScreen() {
         if (!globalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)) {
@@ -133,6 +154,6 @@ class MainActivity : ComponentActivity(), HomeActions, ShadeHost {
     }
 
     // ShadeHost
-    override fun close() { shadeOpen = false }
+    override fun close() = shade.close()
     override fun globalAction(action: Int): Boolean = ShadeAccessibilityService.instance?.globalAction(action) ?: false
 }

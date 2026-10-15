@@ -22,6 +22,13 @@ object Prefs {
     private val _shadeEnabled = MutableStateFlow(true)
     val shadeEnabled: StateFlow<Boolean> = _shadeEnabled.asStateFlow()
 
+    const val THEME_DARK = "dark"
+    const val THEME_LIGHT = "light"
+    const val THEME_SYSTEM = "system"
+
+    private val _themeMode = MutableStateFlow(THEME_DARK)
+    val themeMode: StateFlow<String> = _themeMode.asStateFlow()
+
     fun init(context: Context) {
         if (::sp.isInitialized) return
         sp = context.applicationContext.getSharedPreferences("nothing", Context.MODE_PRIVATE)
@@ -29,6 +36,7 @@ object Prefs {
         _systemWallpaper.value = sp.getBoolean("system_wallpaper", false)
         _monoIcons.value = sp.getBoolean("mono_icons", true)
         _shadeEnabled.value = sp.getBoolean("shade_enabled", true)
+        _themeMode.value = sp.getString("theme_mode", THEME_DARK) ?: THEME_DARK
     }
 
     val favoritesInitialized: Boolean get() = sp.contains("favorites")
@@ -74,5 +82,9 @@ object Prefs {
 
     fun setShadeEnabled(v: Boolean) {
         _shadeEnabled.value = v; sp.edit().putBoolean("shade_enabled", v).apply()
+    }
+
+    fun setThemeMode(v: String) {
+        _themeMode.value = v; sp.edit().putString("theme_mode", v).apply()
     }
 }

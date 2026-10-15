@@ -58,11 +58,11 @@ fun RamPill(modifier: Modifier, onClick: () -> Unit) {
         Canvas(Modifier.size(18.dp)) {
             val step = size.width / 4
             for (i in 0 until 4) for (j in 0 until 4) {
-                drawCircle(N.White, step * 0.3f, Offset(step / 2 + i * step, step / 2 + j * step))
+                drawCircle(N.OnRed, step * 0.3f, Offset(step / 2 + i * step, step / 2 + j * step))
             }
         }
         Spacer(Modifier.width(10.dp))
-        Text(formatBytes(ram), style = NType.body.copy(fontSize = 14.sp), maxLines = 1)
+        Text(formatBytes(ram), style = NType.body.copy(fontSize = 14.sp, color = N.OnRed), maxLines = 1)
     }
 }
 
@@ -138,9 +138,9 @@ fun DotClockWidget(now: Calendar, size: Dp, is24h: Boolean, onClick: () -> Unit)
     ) {
         val dot = size / 24
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            DotText("%02d".format(h), dot = dot, color = N.White, ghost = N.White.copy(alpha = 0.12f))
+            DotText("%02d".format(h), dot = dot, color = N.OnRed, ghost = N.OnRed.copy(alpha = 0.12f))
             Spacer(Modifier.height(dot * 2))
-            DotText("%02d".format(m), dot = dot, color = N.White, ghost = N.White.copy(alpha = 0.12f))
+            DotText("%02d".format(m), dot = dot, color = N.OnRed, ghost = N.OnRed.copy(alpha = 0.12f))
         }
     }
 }
@@ -155,7 +155,7 @@ fun DndPill(on: Boolean, modifier: Modifier, onClick: () -> Unit) {
             Icon(Icons.Outlined.DoNotDisturbOn, null, tint = if (on) N.Red else N.Black, modifier = Modifier.size(18.dp))
         }
         Spacer(Modifier.width(10.dp))
-        Text("Do Not Disturb", style = NType.body.copy(fontSize = 12.sp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text("Do Not Disturb", style = NType.body.copy(fontSize = 12.sp, color = if (on) N.OnRed else N.White), maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -180,7 +180,7 @@ fun MediaWidget(m: MediaInfo, modifier: Modifier) {
                         overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                     val tc = m.controller.transportControls
                     Icon(
-                        if (m.playing) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, null, tint = N.White,
+                        if (m.playing) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, null, tint = N.OnRed,
                         modifier = Modifier.size(26.dp).clip(CircleShape).background(N.Red)
                             .clickable { if (m.playing) tc.pause() else tc.play() }.padding(4.dp),
                     )

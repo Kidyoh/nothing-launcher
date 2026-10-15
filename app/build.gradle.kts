@@ -49,4 +49,6 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    // Lets Android pre-compile Compose's bundled baseline profiles for sideloaded installs (big startup/jank win).
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
 }

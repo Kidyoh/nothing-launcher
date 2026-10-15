@@ -3,7 +3,6 @@ package com.kidyoh.nothinglauncher.ui.drawer
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,12 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -61,11 +57,15 @@ import com.kidyoh.nothinglauncher.data.AppRepository
 import com.kidyoh.nothinglauncher.data.Prefs
 import com.kidyoh.nothinglauncher.ui.components.AppCircle
 import com.kidyoh.nothinglauncher.ui.components.DotText
+import com.kidyoh.nothinglauncher.ui.components.SheetState
+import com.kidyoh.nothinglauncher.ui.components.sheetDrag
+import androidx.compose.ui.platform.LocalFocusManager
 import com.kidyoh.nothinglauncher.ui.theme.N
 import com.kidyoh.nothinglauncher.ui.theme.NType
 
 @Composable
-fun AppDrawer(focusSearch: Boolean, onClose: () -> Unit) {
+fun AppDrawer(sheet: SheetState, searchRequest: Int) {
+    val onClose = { sheet.close() }
     val ctx = LocalContext.current
     val apps by AppRepository.apps.collectAsStateWithLifecycle()
     var query by remember { mutableStateOf("") }
@@ -74,7 +74,8 @@ fun AppDrawer(focusSearch: Boolean, onClose: () -> Unit) {
     val filtered = remember(apps, query) {
         if (query.isBlank()) apps else apps.filter { it.label.contains(query.trim(), ignoreCase = true) }
     }
-    LaunchedEffect(focusSearch) { if (focusSearch) runCatching { focus.requestFocus() } }
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(searchRequest) { if (searchRequest > 0) runCatching { focus.requestFocus() } }
 
     fun open(a: AppInfo) {
         keyboard?.hide()
@@ -83,17 +84,19 @@ fun AppDrawer(focusSearch: Boolean, onClose: () -> Unit) {
     }
 
     val gridState = rememberLazyGridState()
-    // Pull down past the top of the list to close the drawer.
-    val closeOnPull = remember {
-        object : NestedScrollConnection {
-            var pulled = 0f
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-                if (source == NestedScrollSource.UserInput && available.y > 0) {
-                    pulled += available.y
-                    if (pulled > 220f) { pulled = 0f; onClose() }
-                } else if (consumed.y != 0f) pulled = 0f
-                return Offset.Zero
-            }
+    // Pulling down at the top of the list drags the drawer closed with the finger.
+    val closeOnPull = remember(sheet) { sheet.nestedScroll(openDirection = -1) }
+    // Reset once fully closed so the next open starts clean.
+    // derivedStateOf: only recompose when "closed" flips, not on every animation frame.
+    val closed by remember(sheet) {
+        derivedStateOf { sheet.progress.targetValue == 0f && !sheet.progress.isRunning && sheet.progress.value == 0f }
+    }
+    LaunchedEffect(closed) {
+        if (closed) {
+            keyboard?.hide()
+            focusManager.clearFocus()
+            query = ""
+            gridState.scrollToItem(0)
         }
     }
 
@@ -105,10 +108,7 @@ fun AppDrawer(focusSearch: Boolean, onClose: () -> Unit) {
             .imePadding(),
     ) {
         Column(
-            Modifier.fillMaxWidth().pointerInput(Unit) {
-                var total = 0f
-                detectVerticalDragGestures(onDragStart = { total = 0f }, onDragEnd = { if (total > 80f) onClose() }) { _, dy -> total += dy }
-            }.padding(horizontal = 20.dp, vertical = 12.dp),
+            Modifier.fillMaxWidth().sheetDrag(sheet, openDirection = -1).padding(horizontal = 20.dp, vertical = 12.dp),
         ) {
             Box(Modifier.align(Alignment.CenterHorizontally).size(40.dp, 4.dp).clip(CircleShape).background(N.Grey))
             Spacer(Modifier.height(16.dp))

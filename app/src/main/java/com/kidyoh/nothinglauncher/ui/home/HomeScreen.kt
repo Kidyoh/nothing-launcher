@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,7 +61,11 @@ import java.util.Calendar
 
 interface HomeActions {
     fun openDrawer(search: Boolean)
-    fun openShade()
+    /** Live drag on the home screen; positive = towards open. */
+    fun dragDrawer(deltaPx: Float)
+    fun settleDrawer(velocityPx: Float)
+    fun dragShade(deltaPx: Float)
+    fun settleShade(velocityPx: Float)
     fun openSettings()
     fun lockScreen()
     fun launch(intent: Intent)
@@ -95,13 +100,21 @@ fun HomeScreen(actions: HomeActions) {
         Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
-                var total = 0f
+                // Swipe up drags the app drawer, swipe down drags the shade — both follow the finger.
+                val tracker = VelocityTracker()
+                var dir = 0
                 detectVerticalDragGestures(
-                    onDragStart = { total = 0f },
+                    onDragStart = { dir = 0; tracker.resetTracking() },
                     onDragEnd = {
-                        if (total < -100f) act.openDrawer(false) else if (total > 100f) act.openShade()
+                        val v = tracker.calculateVelocity().y
+                        if (dir < 0) act.settleDrawer(-v) else if (dir > 0) act.settleShade(v)
                     },
-                ) { _, dy -> total += dy }
+                    onDragCancel = { if (dir < 0) act.settleDrawer(0f) else if (dir > 0) act.settleShade(0f) },
+                ) { change, dy ->
+                    tracker.addPosition(change.uptimeMillis, change.position)
+                    if (dir == 0) dir = if (dy < 0) -1 else 1
+                    if (dir < 0) act.dragDrawer(-dy) else act.dragShade(dy)
+                }
             }
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -222,7 +235,7 @@ fun AppPicker(apps: List<AppInfo>, onPick: (AppInfo) -> Unit, onRemove: () -> Un
             Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("CHOOSE APP", style = NType.label, modifier = Modifier.weight(1f))
                 Text(
-                    "REMOVE", style = NType.label.copy(color = N.White),
+                    "REMOVE", style = NType.label.copy(color = N.OnRed),
                     modifier = Modifier.clip(CircleShape).background(N.Red).clickable(onClick = onRemove)
                         .padding(horizontal = 12.dp, vertical = 6.dp),
                 )

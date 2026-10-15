@@ -16,7 +16,10 @@ A Nothing OS–style Android home screen launcher written in Kotlin and Jetpack 
 - 10 round app slots. Tap an empty slot or long-press any slot to choose an app.
 - Segmented battery widget, red dot-matrix clock, and a Do Not Disturb pill
 - A black-and-white music widget appears in place of two app slots while something is playing
-- Gestures: swipe down opens the shade, swipe up opens apps, double-tap locks the screen, long-press opens wallpaper and settings
+- Gestures: swipe down opens the shade, swipe up opens apps (both follow your finger and settle with your flick speed), double-tap locks the screen, long-press opens wallpaper and settings
+
+## Light mode
+Long-press home → *Launcher settings* → **Dark / Light / System**. Everything follows it: home, drawer, the pull-down panel and settings.
 
 ## Quick settings in the shade
 Internet, Bluetooth, Torch, DND, Sound/Vibrate/Silent, Auto-rotate, Airplane, Location, Battery saver, Screenshot, Lock, Power menu, a brightness slider with an auto-brightness button, media controls, and swipe-to-dismiss notifications.

@@ -14,21 +14,21 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.widget.FrameLayout
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
 import com.kidyoh.nothinglauncher.data.Prefs
+import com.kidyoh.nothinglauncher.ui.components.SheetLayer
+import com.kidyoh.nothinglauncher.ui.components.SheetState
 import com.kidyoh.nothinglauncher.ui.shade.ShadeHost
 import com.kidyoh.nothinglauncher.ui.shade.ShadePanel
 import com.kidyoh.nothinglauncher.ui.theme.NothingTheme
@@ -36,12 +36,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 /**
- * Puts an invisible strip over the status bar. Swiping down on it (in any app) opens the
- * Nothing-style shade instead of the stock one. Uses TYPE_ACCESSIBILITY_OVERLAY, which needs no
- * "draw over other apps" permission and sits above the system status bar.
+ * Puts an invisible strip over the status bar. Swiping down on it (in any app) pulls down the
+ * Nothing-style shade instead of the stock one, tracking the finger. Uses TYPE_ACCESSIBILITY_OVERLAY,
+ * which needs no "draw over other apps" permission and sits above the system status bar.
+ *
+ * The shade window is created once and kept composed but invisible and untouchable while closed,
+ * so pulling it down never waits for the UI to be built.
  */
 class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
 
@@ -61,8 +65,10 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var trigger: View? = null
     private var shadeRoot: View? = null
+    private var shadeParams: WindowManager.LayoutParams? = null
     private var owner: OverlayOwner? = null
-    private val visible = MutableTransitionState(false)
+    private var sheet: SheetState? = null
+    private var shadeShown = false
 
     override fun onServiceConnected() {
         instance = this
@@ -70,23 +76,26 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
         wm = getSystemService(WindowManager::class.java)
         ContextCompat.registerReceiver(this, screenOff, IntentFilter(Intent.ACTION_SCREEN_OFF), ContextCompat.RECEIVER_NOT_EXPORTED)
         scope.launch {
-            Prefs.shadeEnabled.collect { enabled -> if (enabled) addTrigger() else removeTrigger() }
+            Prefs.shadeEnabled.collect { enabled ->
+                if (enabled) { addShadeWindow(); addTrigger() } else { removeTrigger(); removeShadeWindow() }
+            }
         }
     }
 
     /** Another app or the home screen came to the front (e.g. Home pressed): hide the panel. */
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (shadeRoot == null || event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
+        if (!shadeShown || event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
         val pkg = event.packageName?.toString() ?: return
         if (pkg != packageName && pkg != "com.android.systemui") close()
     }
 
     private val screenOff = object : BroadcastReceiver() {
         override fun onReceive(c: Context?, i: Intent?) {
-            visible.targetState = false
-            removeShade()
+            sheet?.snapClosed()
+            setShadeShown(false)
         }
     }
+
     override fun onInterrupt() = Unit
 
     override fun onDestroy() {
@@ -94,7 +103,7 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
         runCatching { unregisterReceiver(screenOff) }
         scope.cancel()
         removeTrigger()
-        removeShade()
+        removeShadeWindow()
         super.onDestroy()
     }
 
@@ -107,15 +116,44 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
     @SuppressLint("ClickableViewAccessibility")
     private fun addTrigger() {
         if (trigger != null) return
-        val threshold = 24 * resources.displayMetrics.density
+        val slop = ViewConfiguration.get(this).scaledTouchSlop.toFloat()
         val v = View(this)
         var downY = 0f
-        var fired = false
+        var lastY = 0f
+        var dragging = false
+        var tracker: VelocityTracker? = null
         v.setOnTouchListener { _, e ->
             when (e.actionMasked) {
-                MotionEvent.ACTION_DOWN -> { downY = e.rawY; fired = false }
-                MotionEvent.ACTION_MOVE -> if (!fired && e.rawY - downY > threshold) { fired = true; showShade() }
-                MotionEvent.ACTION_UP -> if (!fired && e.rawY - downY > threshold / 2) showShade()
+                MotionEvent.ACTION_DOWN -> {
+                    downY = e.rawY; lastY = e.rawY; dragging = false
+                    tracker?.recycle()
+                    tracker = VelocityTracker.obtain().also { it.addMovement(e) }
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    tracker?.addMovement(e)
+                    if (!dragging && e.rawY - downY > slop) {
+                        dragging = true
+                        lastY = downY + slop
+                        QuickSettings.refresh(this)
+                        setShadeShown(true)
+                    }
+                    if (dragging) {
+                        sheet?.dragBy(e.rawY - lastY)
+                        lastY = e.rawY
+                    }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    val t = tracker
+                    if (dragging && t != null) {
+                        t.addMovement(e)
+                        t.computeCurrentVelocity(1000)
+                        sheet?.settle(t.yVelocity)
+                    } else if (e.actionMasked == MotionEvent.ACTION_UP && e.rawY - downY > slop / 2) {
+                        showShade()
+                    }
+                    t?.recycle()
+                    tracker = null
+                }
             }
             true
         }
@@ -139,9 +177,8 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
         trigger = null
     }
 
-    fun showShade() {
-        if (shadeRoot != null) { visible.targetState = true; return }
-        QuickSettings.refresh(this)
+    private fun addShadeWindow() {
+        if (shadeRoot != null) return
         val o = OverlayOwner()
         val root = object : FrameLayout(this) {
             override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -154,50 +191,70 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
         }
         val compose = ComposeView(this).apply {
             setContent {
+                // The sheet needs a composition scope: its spring animations run on the frame clock.
+                val composeScope = rememberCoroutineScope()
+                val s = remember { SheetState(composeScope).also { sheet = it } }
+                LaunchedEffect(s) {
+                    snapshotFlow { s.progress.value == 0f && s.progress.targetValue == 0f && !s.progress.isRunning }
+                        .distinctUntilChanged()
+                        .collect { closed -> if (closed) setShadeShown(false) }
+                }
                 NothingTheme {
-                    val host = remember { this@ShadeAccessibilityService }
-                    AnimatedVisibility(
-                        visibleState = visible,
-                        enter = slideInVertically { -it / 3 } + fadeIn(),
-                        exit = slideOutVertically { -it / 3 } + fadeOut(),
-                    ) { ShadePanel(host) }
-                    LaunchedEffect(visible.isIdle, visible.currentState) {
-                        if (visible.isIdle && !visible.currentState) removeShade()
-                    }
+                    SheetLayer(s, fromTop = true) { ShadePanel(this@ShadeAccessibilityService, s) }
                 }
             }
         }
         root.addView(compose)
+        root.visibility = View.INVISIBLE
         o.attach(root)
         o.resume()
         val lp = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+            HIDDEN_FLAGS,
             PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP
             layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
-        visible.targetState = true
         runCatching { wm.addView(root, lp) }.onSuccess {
             shadeRoot = root
+            shadeParams = lp
             owner = o
         }.onFailure { o.destroy() }
     }
 
-    private fun removeShade() {
+    private fun removeShadeWindow() {
         shadeRoot?.let { runCatching { wm.removeView(it) } }
         shadeRoot = null
+        shadeParams = null
+        sheet = null
+        shadeShown = false
         owner?.destroy()
         owner = null
     }
 
+    /** Visible + touchable + focusable (for Back) while open; invisible and pass-through while closed. */
+    private fun setShadeShown(shown: Boolean) {
+        val root = shadeRoot ?: return
+        val lp = shadeParams ?: return
+        if (shadeShown == shown) return
+        shadeShown = shown
+        lp.flags = if (shown) SHOWN_FLAGS else HIDDEN_FLAGS
+        root.visibility = if (shown) View.VISIBLE else View.INVISIBLE
+        runCatching { wm.updateViewLayout(root, lp) }
+    }
+
+    fun showShade() {
+        if (shadeRoot == null) addShadeWindow()
+        QuickSettings.refresh(this)
+        setShadeShown(true)
+        sheet?.open()
+    }
+
     // ShadeHost
-    override fun close() { visible.targetState = false }
+    override fun close() { sheet?.close() }
 
     override fun launch(intent: Intent) {
         close()
@@ -207,8 +264,14 @@ class ShadeAccessibilityService : AccessibilityService(), ShadeHost {
     override fun globalAction(action: Int): Boolean {
         // Let the panel animate away before screenshots / lock so it isn't captured.
         close()
-        val delayMs = if (action == GLOBAL_ACTION_POWER_DIALOG) 0L else 450L
+        val delayMs = if (action == GLOBAL_ACTION_POWER_DIALOG) 0L else 350L
         main.postDelayed({ performGlobalAction(action) }, delayMs)
         return true
     }
 }
+
+private const val SHOWN_FLAGS =
+    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+
+private const val HIDDEN_FLAGS = SHOWN_FLAGS or
+    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE

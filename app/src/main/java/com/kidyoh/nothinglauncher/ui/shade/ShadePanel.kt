@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -83,6 +82,9 @@ import com.kidyoh.nothinglauncher.service.NotifItem
 import com.kidyoh.nothinglauncher.service.NotificationService
 import com.kidyoh.nothinglauncher.service.QuickSettings
 import com.kidyoh.nothinglauncher.ui.components.DotText
+import com.kidyoh.nothinglauncher.ui.components.SheetState
+import com.kidyoh.nothinglauncher.ui.components.sheetDrag
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.kidyoh.nothinglauncher.ui.theme.N
 import com.kidyoh.nothinglauncher.ui.theme.NType
 import java.text.SimpleDateFormat
@@ -97,24 +99,18 @@ interface ShadeHost {
 }
 
 @Composable
-fun ShadePanel(host: ShadeHost, modifier: Modifier = Modifier) {
+fun ShadePanel(host: ShadeHost, sheet: SheetState, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val qs by QuickSettings.state.collectAsStateWithLifecycle()
     val notifs by NotificationService.notifications.collectAsStateWithLifecycle()
     val listenerOn by NotificationService.connected.collectAsStateWithLifecycle()
     val media by NotificationService.media.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { QuickSettings.refresh(ctx) }
 
     fun run(intent: Intent?) { if (intent != null) host.launch(intent) }
 
-    // Drag up anywhere on the non-scrolling chrome to close.
-    val closeDrag = Modifier.pointerInput(Unit) {
-        var total = 0f
-        detectVerticalDragGestures(
-            onDragStart = { total = 0f },
-            onDragEnd = { if (total < -80f) host.close() },
-        ) { _, dy -> total += dy }
-    }
+    // Dragging the header or grab bar moves the panel with the finger; the list hands over at its edges.
+    val closeDrag = Modifier.sheetDrag(sheet, openDirection = 1)
+    val listScroll = remember(sheet) { sheet.nestedScroll(openDirection = 1) }
 
     Column(
         modifier
@@ -124,7 +120,7 @@ fun ShadePanel(host: ShadeHost, modifier: Modifier = Modifier) {
             .navigationBarsPadding(),
     ) {
         LazyColumn(
-            Modifier.weight(1f).fillMaxWidth(),
+            Modifier.weight(1f).fillMaxWidth().nestedScroll(listScroll),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -204,7 +200,7 @@ fun ShadePanel(host: ShadeHost, modifier: Modifier = Modifier) {
                 item {
                     Text(
                         "Tap to allow notification access so they appear here",
-                        style = NType.body,
+                        style = NType.body.copy(color = N.OnRed),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(24.dp))
@@ -266,7 +262,7 @@ private fun SmallCircle(icon: ImageVector, red: Boolean = false, onClick: () -> 
     Box(
         Modifier.size(44.dp).clip(CircleShape).background(if (red) N.Red else N.SurfaceHigh).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { Icon(icon, null, tint = N.White, modifier = Modifier.size(20.dp)) }
+    ) { Icon(icon, null, tint = if (red) N.OnRed else N.White, modifier = Modifier.size(20.dp)) }
 }
 
 @Composable
@@ -281,13 +277,13 @@ private fun WideTile(icon: ImageVector, title: String, sub: String, on: Boolean,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            Modifier.size(48.dp).clip(CircleShape).background(if (on) N.White else N.SurfaceHigh),
+            Modifier.size(48.dp).clip(CircleShape).background(if (on) N.OnRed else N.SurfaceHigh),
             contentAlignment = Alignment.Center,
         ) { Icon(icon, null, tint = if (on) N.Red else N.White, modifier = Modifier.size(22.dp)) }
         Spacer(Modifier.width(10.dp))
         Column {
-            Text(title, style = NType.title.copy(fontSize = 13.sp), maxLines = 1)
-            Text(sub, style = NType.bodySmall.copy(color = if (on) N.White else N.Grey), maxLines = 1)
+            Text(title, style = NType.title.copy(fontSize = 13.sp, color = if (on) N.OnRed else N.White), maxLines = 1)
+            Text(sub, style = NType.bodySmall.copy(color = if (on) N.OnRed else N.Grey), maxLines = 1)
         }
     }
 }
@@ -298,7 +294,7 @@ private fun RoundTile(icon: ImageVector, label: String, on: Boolean, onClick: ()
         Box(
             Modifier.size(64.dp).clip(CircleShape).background(if (on) N.Red else N.Surface).clickable(onClick = onClick),
             contentAlignment = Alignment.Center,
-        ) { Icon(icon, label, tint = N.White, modifier = Modifier.size(24.dp)) }
+        ) { Icon(icon, label, tint = if (on) N.OnRed else N.White, modifier = Modifier.size(24.dp)) }
         Spacer(Modifier.height(6.dp))
         Text(label, style = NType.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
@@ -340,7 +336,7 @@ private fun BrightnessSlider(value: Float, auto: Boolean, onChange: (Float) -> U
         Box(
             Modifier.size(60.dp).clip(CircleShape).background(if (auto) N.Red else N.Surface).clickable(onClick = onToggleAuto),
             contentAlignment = Alignment.Center,
-        ) { Icon(Icons.Outlined.BrightnessAuto, "Auto brightness", tint = N.White) }
+        ) { Icon(Icons.Outlined.BrightnessAuto, "Auto brightness", tint = if (auto) N.OnRed else N.White) }
     }
 }
 
@@ -378,7 +374,7 @@ private fun MediaButton(icon: ImageVector, red: Boolean = false, onClick: () -> 
     Box(
         Modifier.padding(start = 4.dp).size(40.dp).clip(CircleShape).background(if (red) N.Red else N.SurfaceHigh).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { Icon(icon, null, tint = N.White, modifier = Modifier.size(20.dp)) }
+    ) { Icon(icon, null, tint = if (red) N.OnRed else N.White, modifier = Modifier.size(20.dp)) }
 }
 
 @Composable

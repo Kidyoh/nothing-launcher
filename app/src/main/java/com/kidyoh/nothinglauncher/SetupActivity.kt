@@ -7,6 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.compose.runtime.LaunchedEffect
+import com.kidyoh.nothinglauncher.ui.theme.rememberIsDark
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,7 +60,17 @@ class SetupActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         Prefs.init(this)
-        setContent { NothingTheme { Screen() } }
+        setContent {
+            NothingTheme {
+                val dark = rememberIsDark()
+                LaunchedEffect(dark) {
+                    val bars = if (dark) SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    else SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+                    enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+                }
+                Screen()
+            }
+        }
     }
 
     override fun onResume() {
@@ -107,6 +120,8 @@ class SetupActivity : ComponentActivity() {
 
             Spacer(Modifier.height(8.dp))
             Text("PREFERENCES", style = NType.label)
+            val theme by Prefs.themeMode.collectAsStateWithLifecycle()
+            ThemePicker(theme)
             Toggle("Replace system pull-down panel", shade) { Prefs.setShadeEnabled(it) }
             Toggle("Monochrome (Nothing) icons", mono) { Prefs.setMonoIcons(it) }
             Toggle("Use my own wallpaper", systemWallpaper) { Prefs.setSystemWallpaper(it) }
@@ -116,7 +131,7 @@ class SetupActivity : ComponentActivity() {
                 Modifier.fillMaxWidth().height(56.dp).clip(CircleShape).background(N.Red)
                     .clickable { Prefs.setupDone = true; finish() },
                 contentAlignment = Alignment.Center,
-            ) { Text("DONE", style = NType.title) }
+            ) { Text("DONE", style = NType.title.copy(color = N.OnRed)) }
         }
     }
 
@@ -130,13 +145,31 @@ class SetupActivity : ComponentActivity() {
             Box(
                 Modifier.size(40.dp).clip(CircleShape).background(if (done) N.White else N.Red),
                 contentAlignment = Alignment.Center,
-            ) { Text(if (done) "✓" else n, style = NType.title.copy(color = if (done) N.Black else N.White)) }
+            ) { Text(if (done) "✓" else n, style = NType.title.copy(color = if (done) N.Black else N.OnRed)) }
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = NType.title)
                 Text(sub, style = NType.bodySmall)
             }
             Text(if (done) "ON" else "GRANT", style = NType.label.copy(color = if (done) N.Grey else N.Red))
+        }
+    }
+
+    @Composable
+    private fun ThemePicker(current: String) {
+        Row(
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).background(N.Surface).padding(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            listOf(Prefs.THEME_DARK to "DARK", Prefs.THEME_LIGHT to "LIGHT", Prefs.THEME_SYSTEM to "SYSTEM").forEach { (mode, label) ->
+                val selected = mode == current
+                Box(
+                    Modifier.weight(1f).height(44.dp).clip(CircleShape)
+                        .background(if (selected) N.Red else N.Surface)
+                        .clickable { Prefs.setThemeMode(mode) },
+                    contentAlignment = Alignment.Center,
+                ) { Text(label, style = NType.label.copy(color = if (selected) N.OnRed else N.White)) }
+            }
         }
     }
 
@@ -149,7 +182,7 @@ class SetupActivity : ComponentActivity() {
             Text(label, style = NType.body, modifier = Modifier.weight(1f))
             Switch(
                 checked = value, onCheckedChange = onChange,
-                colors = SwitchDefaults.colors(checkedTrackColor = N.Red, checkedThumbColor = N.White),
+                colors = SwitchDefaults.colors(checkedTrackColor = N.Red, checkedThumbColor = N.OnRed),
             )
         }
     }
