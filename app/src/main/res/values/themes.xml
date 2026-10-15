@@ -1,0 +1,15 @@
+<resources>
+    <style name="Theme.Nothing" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/nothing_black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Home shows the system wallpaper behind it; Compose paints the Nothing background on top unless disabled. -->
+    <style name="Theme.Nothing.Home">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+</resources>
