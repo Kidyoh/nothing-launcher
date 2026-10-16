@@ -1,0 +1,209 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Applivery edit 2</title>
+<link rel="stylesheet" href="base.css">
+<style>
+#bgdark{background:radial-gradient(circle at 30% 25%,#3b1670 0,transparent 55%),radial-gradient(circle at 80% 75%,#0e4a5c 0,transparent 50%),#08060f}
+#hook{left:40px;top:80px;width:640px;padding:24px 30px 28px;text-align:left}
+#yr{font-size:200px;color:var(--red);display:block;margin-top:-6px}
+#unless{display:flex;align-items:center;gap:14px;margin-top:6px;font-weight:800;font-size:40px;letter-spacing:-.02em}
+.sl{left:0;top:0}
+.sl .phone{transform-origin:0 0}
+.lbl{position:absolute;font-weight:900;font-size:40px;color:#fff;letter-spacing:-.02em;text-shadow:0 4px 20px rgba(0,0,0,.6)}
+.fl{position:absolute;font-size:62px}
+#glow{left:60px;top:120px;width:600px;height:640px;border-radius:50%;background:radial-gradient(circle,#c026d3 0,#7c3aed 35%,transparent 70%);filter:blur(30px)}
+.stamp{position:absolute;padding:14px 30px;border:6px solid var(--red);color:var(--red);font-weight:900;font-size:110px;letter-spacing:-.03em;border-radius:22px;background:rgba(255,255,255,.92);line-height:1}
+#flash{left:0;top:0;width:720px;height:1280px;background:#fff}
+#e_intro{left:40px;top:500px;width:640px}
+#e_word{font-size:92px}
+#ph{left:48px;top:500px}
+.step{position:absolute;left:372px;width:310px;padding:16px 18px}
+.step .n{font-family:var(--mono);font-size:15px;color:var(--teal);font-weight:600;letter-spacing:.1em}
+.step .tt{font-weight:800;font-size:27px;letter-spacing:-.02em;margin-top:2px}
+#skill{left:372px;top:980px;padding:18px 22px;background:var(--ink);color:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.tile{position:absolute;width:310px;height:350px;padding:20px;overflow:hidden}
+.tile .mono{font-size:15px;color:var(--ink2)}
+#months{left:40px;top:540px;width:640px;padding:30px 34px 36px}
+#mnum{font-size:150px;font-variant-numeric:tabular-nums}
+#slider{left:202px;top:500px}
+#divider{left:0;top:0;width:6px;height:690px;background:var(--teal);box-shadow:0 0 0 3px #fff}
+#end{left:0;top:110px;width:720px;text-align:center}
+#progress{left:0;top:0;height:6px;width:720px;background:var(--teal);transform-origin:0 50%}
+</style></head><body><div id="stage">
+<div id="bg" class="abs"></div>
+<div id="bgdark" class="abs"></div>
+<div id="glow" class="abs"></div>
+
+<!-- slop parade -->
+<div id="sp1" class="abs sl" style="left:20px;top:150px"><div class="phone" style="transform:scale(.6)"><div class="scr" id="slop1"></div></div></div>
+<div id="sp2" class="abs sl" style="left:400px;top:120px"><div class="phone" style="transform:scale(.6)"><div class="scr" id="slop2"></div></div></div>
+<div id="sp3" class="abs sl" style="left:215px;top:330px"><div class="phone" style="transform:scale(.6)"><div class="scr" id="slop3"></div></div></div>
+<div id="l1" class="abs lbl" style="left:40px;top:90px">this</div>
+<div id="l2" class="abs lbl" style="left:470px;top:60px">or this</div>
+<div id="l3" class="abs lbl" style="left:270px;top:780px">or this…</div>
+<div id="fl1" class="abs fl" style="left:40px;top:640px">✨</div><div id="fl2" class="abs fl" style="left:560px;top:540px">🚀</div>
+<div id="fl3" class="abs fl" style="left:600px;top:120px">🔮</div><div id="fl4" class="abs fl" style="left:120px;top:40px">💜</div>
+<div id="fl5" class="abs fl" style="left:330px;top:40px">⚡</div><div id="fl6" class="abs fl" style="left:20px;top:420px">🔥</div>
+<div id="st1" class="abs stamp" style="left:110px;top:330px">AI SLOP</div>
+<div id="st2" class="abs stamp" style="left:60px;top:520px;font-size:130px;background:var(--red);color:#fff;border-color:#fff">AI SLOP</div>
+
+<!-- clean section -->
+<div id="e_intro" class="abs"><div class="kicker">But if you use</div><div style="display:flex;align-items:center;gap:16px;margin-top:8px"><img src="../assets/applivery_icon.png" style="width:84px;height:84px;border-radius:22px"><span id="e_word" class="h-big">applivery</span></div></div>
+<div id="ph" class="abs phone" style="transform-origin:0 0"><div class="scr"><img src="../assets/home_pro_light.png"><img id="phB" src="../assets/export_light.png"></div></div>
+<div id="s1" class="abs step card" style="top:520px"><div class="n">01 · Any app</div><div class="tt">Pick any app on your phone</div></div>
+<div id="s2" class="abs step card" style="top:660px"><div class="n">02 · Extract</div><div class="tt">Colours, type, motion, assets</div></div>
+<div id="s3" class="abs step card" style="top:800px;background:var(--teal-soft);border-color:#B7D9D1"><div class="n">03 · Export</div><div class="tt">One design skill for your agent</div></div>
+<div id="skill" class="abs"><div class="mono" style="font-size:14px;color:#9FD8CB">applivery-reel-v1</div><div style="font-family:var(--mono);font-size:30px;font-weight:600;margin-top:4px">SKILL.md ✓</div></div>
+
+<!-- bento -->
+<div id="t1" class="abs tile card" style="left:40px;top:496px"><div class="mono">Colours · light + dark</div>
+  <div style="margin-top:14px;display:grid;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px"><i style="width:44px;height:44px;border-radius:12px;background:#0B0B0F"></i><span class="mono" style="font-size:16px;color:var(--ink)">#0B0B0F bg</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><i style="width:44px;height:44px;border-radius:12px;background:#E8453C"></i><span class="mono" style="font-size:16px;color:var(--ink)">#E8453C accent</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><i style="width:44px;height:44px;border-radius:12px;background:#1C1C24"></i><span class="mono" style="font-size:16px;color:var(--ink)">#1C1C24 surface</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><i style="width:44px;height:44px;border-radius:12px;background:#F5F2EA;border:1px solid var(--line)"></i><span class="mono" style="font-size:16px;color:var(--ink)">#F5F2EA text</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><i style="width:44px;height:44px;border-radius:12px;background:#C6F432"></i><span class="mono" style="font-size:16px;color:var(--ink)">#C6F432 pop</span></div></div></div>
+<div id="t2" class="abs tile card" style="left:370px;top:496px"><div class="mono">Typography · 7 sizes</div>
+  <div style="font-size:130px;font-weight:800;letter-spacing:-.05em;line-height:1;margin-top:20px;color:var(--red)">Aa</div>
+  <div style="font-size:30px;font-weight:700;margin-top:10px">Sora · Rubik</div><div class="mono" style="margin-top:8px">40 · 28 · 20 · 16</div></div>
+<div id="t3" class="abs tile card" style="left:40px;top:866px;height:360px;background:var(--night);border-color:#222"><div class="mono" style="color:#9a9a9a;display:flex;justify-content:space-between">Motion <span style="color:#fff">360ms</span></div>
+  <svg viewBox="0 0 270 200" width="270" height="200" style="margin-top:16px"><path d="M4 196H266M4 4V196" stroke="#333"/><path id="curve2" d="M4 196 C58 196 54 6 266 6" fill="none" stroke="#E8453C" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/><circle id="cdot" r="9" fill="#C6F432" cx="4" cy="196"/></svg>
+  <div class="mono" style="color:#9a9a9a;font-size:13px">cubic-bezier(.2, 0, 0, 1)</div></div>
+<div id="t4" class="abs tile card" style="left:370px;top:866px;height:360px"><div class="mono">Assets</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px">
+  <div style="aspect-ratio:1;border-radius:16px;background:#111;display:grid;place-items:center;color:#E8453C;font-weight:900;font-size:34px">R</div>
+  <div style="aspect-ratio:1;border-radius:16px;background:#C6F432"></div><div style="aspect-ratio:1;border-radius:50%;background:#E8453C"></div>
+  <div style="aspect-ratio:1;border-radius:16px;background:var(--cream);border:1px solid var(--line);display:grid;place-items:center;font-size:30px">★</div>
+  <div style="aspect-ratio:1;border-radius:16px;background:#1C1C24"></div><div style="aspect-ratio:1;border-radius:16px;background:var(--teal-soft)"></div></div>
+  <div style="font-weight:800;font-size:22px;margin-top:16px">icons · images · Lottie · fonts</div></div>
+
+<!-- months -->
+<div id="months" class="abs card"><div class="kicker" id="mk">Everything that took</div><div class="h-big" id="mnum">0</div><div id="mlab" style="font-weight:800;font-size:44px;letter-spacing:-.03em;margin-top:-6px">days of design work</div>
+  <div id="myours" style="margin-top:20px;display:inline-block;background:var(--teal);color:#fff;font-weight:900;font-size:56px;letter-spacing:-.03em;padding:12px 26px;border-radius:20px">→ now it's yours</div></div>
+
+<!-- slider before/after -->
+<div id="slider" class="abs phone"><div class="scr"><div id="slopS"></div><img id="cleanS" src="../assets/home_pro_light.png" style="position:absolute;inset:0"></div></div>
+<div id="divider" class="abs"></div>
+<div id="lyour" class="abs chip" style="left:30px;top:520px">Your app</div>
+<div id="lkit" class="abs chip" style="left:478px;top:1120px;background:var(--teal);color:#fff;border-color:var(--teal)">+ the app's skill</div>
+
+<div id="face"><img id="faceimg"><div class="ring" id="ring"></div></div>
+
+<!-- hook -->
+<div id="hook" class="abs card"><div class="kicker" id="hk">I wouldn't start</div>
+  <div class="h-big" id="hvc" style="font-size:84px;margin-top:6px">vibe coding in</div><span class="h-big" id="yr">2026</span>
+  <div id="unless"><span>unless I use</span><span id="uapp" style="display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:6px 14px 6px 8px"><img src="../assets/applivery_icon.png" style="width:44px;height:44px;border-radius:12px;border:2px solid #fff">this app</span></div></div>
+<div id="flash" class="abs"></div>
+
+<!-- end -->
+<div id="end" class="abs">
+  <div id="e1"><img src="../assets/applivery_icon.png" style="width:110px;height:110px;border-radius:28px"></div>
+  <div id="e2" class="h-big" style="font-size:74px;margin-top:22px">Take any app apart.<br><span style="color:#A8A49B">Keep its design.</span></div>
+  <div id="e3" style="margin-top:30px"><span style="display:inline-block;background:var(--teal);color:#fff;font-weight:700;font-size:28px;padding:20px 36px;border-radius:999px;box-shadow:0 18px 40px rgba(15,110,99,.35)">↓ Get Applivery for Android</span></div>
+  <div id="e4" class="mono" style="margin-top:20px;font-size:19px;color:var(--ink2)">applivery.livery.site · made by livery</div>
+</div>
+<div id="capwrap"><div id="cap"></div></div>
+<div id="progress" class="abs"></div>
+</div>
+<script src="../v2/words.js"></script><script src="slop.js"></script><script src="engine.js"></script>
+<script>
+FACE_DIR='../v2/face';FACE_N=1098;window.DURATION=36.58;
+['slop1','slop2','slop3'].forEach((id,i)=>$('#'+id).innerHTML=SLOP[i+1]);
+$('#slopS').innerHTML=SLOP[2];
+CHUNKS=buildChunks(WORDS);
+capHidden=[[0,3.95],[34.0,40]];
+
+// ---------- layouts ----------
+const F=(t,l,e)=>[t,{...LAY[l]},e];
+K('#face',[F(0,'full'),F(6.4,'full'),F(6.85,'pip'),F(15.3,'pip'),F(15.75,'cardTop'),F(33.95,'cardTop'),F(34.4,'card')]);
+K('#ring',[[0,{o:0}],[6.5,{o:0}],[6.8,{o:1}]]);
+K('#faceimg',[[0,{s:1}],[1.55,{s:1.03},'lin'],[1.62,{s:1.16}],[3.6,{s:1.2},'lin'],[3.9,{s:1.04}],[5.25,{s:1.06},'lin'],[5.32,{s:1.18}],[6.4,{s:1.2},'lin'],[6.85,{s:1.35}],[15.3,{s:1.35}],[15.75,{s:1.12}],[34.0,{s:1.12}],[34.4,{s:1.0}]]);
+K('#bgdark',[[0,{o:0}],[6.4,{o:0}],[6.7,{o:1},'out'],[15.3,{o:1}],[15.32,{o:0},'lin']]);
+K('#bg',[[0,{o:0}],[15.3,{o:0}],[15.32,{o:1},'lin']]);
+K('#flash',[[0,{o:0}],[15.3,{o:0}],[15.32,{o:.95},'lin'],[15.7,{o:0},'out']]);
+K('#capwrap',[[0,{y:1010}],[6.4,{y:1010}],[6.8,{y:880}],[15.3,{y:880}],[15.7,{y:418}]]);
+K('#progress',[[0,{sx:0}],[36.58,{sx:1},'lin']]);
+
+// ---------- A hook ----------
+show('#hook',.1,3.88,{from:{o:0,y:-50,s:.95},exit:{o:0,y:-90}});
+show('#hk',.15,null,{from:{o:0,x:-20,y:0}});
+show('#hvc',.88,null,{from:{o:0,y:30,b:8},dur:.35});
+show('#yr',1.56,null,{from:{o:0,s:2.4,r:-6},dur:.35,ease:'out'});
+K('#hook',[[1.56,{}],[1.6,{x:-8,y:6},'lin'],[1.64,{x:8,y:-4},'lin'],[1.68,{x:-4},'lin'],[1.72,{x:0,y:0},'lin']]);
+show('#unless',2.08,null,{from:{o:0,y:20}});
+show('#uapp',3.2,null,{from:{o:0,s:.4,r:-10},ease:'back'});
+sfx(.1,'whoosh',.6);sfx(.15,'pop',.4);sfx(.88,'tick');sfx(1.56,'boom',.9);sfx(2.08,'tick');sfx(3.2,'pop');sfx(3.9,'whoosh',.6);sfx(5.28,'boom',.45);
+
+// ---------- C slop parade ----------
+show('#sp1',6.55,15.05,{from:{o:1,x:-500,r:-30},rest:{r:-8},dur:.5,exit:{o:0,y:900,r:-40},outDur:.25});
+show('#sp2',7.5,15.05,{from:{o:1,x:500,r:30},rest:{r:7},dur:.5,exit:{o:0,y:900,r:30},outDur:.25});
+show('#sp3',8.56,15.05,{from:{o:1,y:900,r:-10},rest:{r:-2},dur:.5,exit:{o:0,y:900,r:-15},outDur:.25});
+show('#l1',6.6,11.8,{from:{o:0,s:2,r:-10},rest:{r:-6},dur:.3,ease:'back'});
+show('#l2',7.54,11.8,{from:{o:0,s:2,r:10},rest:{r:5},dur:.3,ease:'back'});
+show('#l3',8.6,11.8,{from:{o:0,s:2},rest:{r:-3},dur:.3,ease:'back'});
+sfx(6.4,'whoosh',.6);sfx(6.55,'swipe');sfx(6.6,'pop',.5);sfx(7.5,'swipe');sfx(7.54,'pop',.5);sfx(8.56,'swipe');sfx(8.6,'pop',.5);
+// floating junk
+['#fl1','#fl2','#fl3','#fl4','#fl5','#fl6'].forEach((f,i)=>{
+  const a=8.84+i*.12;
+  show(f,a,13.3,{from:{o:0,s:0},dur:.45,ease:'back'});
+  HOOKS.push(t=>{const e=$(f);if(t<a)return;const ph=t*1.6+i*1.3;e.style.transform+=` translate(${Math.sin(ph)*26}px,${Math.cos(ph*1.3)*30}px) rotate(${Math.sin(ph)*14}deg)`});
+});
+sfx(8.84,'sparkle',.8);sfx(9.8,'sparkle',.5);
+// the glowing shadow
+K('#glow',[[0,{o:0,s:.6}],[10.95,{o:0,s:.6}],[11.35,{o:.9,s:1.1},'out'],[12.6,{o:.9,s:1}],[13.0,{o:.3}],[15.05,{o:.3}],[15.3,{o:0}]]);
+HOOKS.push(t=>{const g=$('#glow');if(t>11.3&&t<12.7)g.style.opacity=(.75+.25*Math.sin(t*14)).toFixed(3)});
+sfx(10.98,'riser',.6);
+// AI slop stamps
+show('#st1',12.74,15.05,{from:{o:0,s:3,r:-14},rest:{r:-8},dur:.2,ease:'out',exit:{o:0,y:700,r:-30},outDur:.25});
+show('#st2',14.82,15.05,{from:{o:0,s:3,r:12},rest:{r:6},dur:.2,ease:'out',exit:{o:0,y:700,r:30},outDur:.25});
+const shake=(a)=>[[a,{}],[a+.04,{x:-14,y:8},'lin'],[a+.08,{x:12,y:-8},'lin'],[a+.12,{x:-8,y:4},'lin'],[a+.16,{x:6},'lin'],[a+.2,{x:0,y:0},'lin']];
+['#sp1','#sp2','#sp3'].forEach(s=>{K(s,shake(12.74));K(s,shake(14.82))});
+K('#face',shake(14.82));
+HOOKS.push(t=>{['#slop1','#slop2','#slop3'].forEach(s=>$(s).style.filter=t>12.8?`grayscale(${clamp((t-12.8)/.5)*.85}) brightness(${1-clamp((t-12.8)/.5)*.35})`:'')});
+sfx(12.74,'stamp');sfx(12.8,'buzz',.7);sfx(14.82,'stamp');sfx(14.86,'glitch',.8);sfx(15.05,'whoosh',.6);
+
+// ---------- E clean: convert any app into a skill ----------
+sfx(15.3,'boom',.6);sfx(15.32,'ding',.45);
+show('#e_intro',15.6,17.3,{from:{o:0,y:40}});
+K('#e_word',[[15.85,{o:0,cl:0}],[16.3,{o:1,cl:1}]]);
+show('#ph',17.4,23.35,{from:{o:1,y:900,r:6},dur:.6,rest:{s:.9},exit:{o:0,x:-200}});
+show('#s1',18.44,23.35,{from:{o:0,x:80,y:0},ease:'back'});
+show('#s2',20.18,23.35,{from:{o:0,x:80,y:0},ease:'back'});
+show('#s3',22.08,23.35,{from:{o:0,x:80,y:0},ease:'back'});
+K('#phB',[[0,{o:0,ct:0}],[22.1,{o:1,ct:0}],[22.6,{ct:1},'inout']]);
+show('#skill',23.08,23.35,{from:{o:0,s:.5},dur:.25,ease:'back',exit:{o:0,s:1.3}});
+sfx(15.6,'whoosh',.5);sfx(17.4,'whoosh');sfx(18.44,'pop');sfx(20.18,'pop');sfx(22.08,'pop');sfx(22.1,'scan',.8);sfx(23.08,'ding');
+
+// ---------- F bento: colours / type / motion / assets ----------
+[['#t1',24.88,{x:-120,r:-8}],['#t2',25.64,{x:120,r:8}],['#t3',26.62,{x:-120,r:8}],['#t4',27.98,{x:120,r:-8}]].forEach(([s,a,f])=>{
+  show(s,a,28.9,{from:{o:0,s:.7,...f},dur:.5,ease:'back',exit:{o:0,s:.6,y:-60},outDur:.3});
+  sfx(a,'pop');sfx(a-.05,'swipe',.5);
+});
+HOOKS.push(t=>{const p=Ease.inout(clamp((t-26.8)/.8));$('#curve2').style.strokeDashoffset=1-p;
+  const path=$('#curve2');const L=path.getTotalLength();const pt=path.getPointAtLength(L*p);$('#cdot').setAttribute('cx',pt.x);$('#cdot').setAttribute('cy',pt.y)});
+sfx(23.4,'whoosh',.5);
+
+// ---------- G months -> yours ----------
+show('#months',29.0,31.9,{from:{o:0,y:80,s:.9},exit:{o:0,y:-60}});
+show('#mk',29.0,null,{from:{o:0,y:10}});
+HOOKS.push(t=>{const v=Math.round(180*Ease.out(clamp((t-29.6)/1.1)));$('#mnum').textContent=t<31.35?v:'0';
+  $('#mnum').style.color=t<31.35?'var(--ink)':'var(--teal)';$('#mlab').textContent=t<31.35?'days of design work':'days. one tap.'});
+show('#myours',31.35,null,{from:{o:0,s:.4,r:-6},dur:.4,ease:'back'});
+K('#months',[[31.35,{}],[31.45,{s:1.04},'out'],[31.6,{s:1}]]);
+sfx(29.0,'whoosh',.6);sfx(29.6,'type',.8);sfx(30.4,'type',.6);sfx(31.35,'boom',.7);sfx(31.38,'pop');
+
+// ---------- H make yours look like that ----------
+show('#slider',31.95,33.95,{from:{o:1,y:900},dur:.55,exit:{o:0,y:60}});
+K('#cleanS',[[0,{cl:0}],[32.5,{cl:0}],[33.4,{cl:1},'inout']]);
+K('#divider',[[0,{o:0}],[31.95,{o:0}],[32.0,{o:1,x:202,y:1400}],[32.5,{x:211,y:509}],[33.4,{x:503,y:509},'inout'],[33.95,{o:0}]]);
+show('#lyour',32.1,33.95,{from:{o:0,x:-40,y:0}});
+show('#lkit',32.7,33.95,{from:{o:0,x:40,y:0},ease:'back'});
+sfx(31.95,'whoosh');sfx(32.5,'riser',.6);sfx(33.4,'ding');
+
+// ---------- I end ----------
+show('#e1',34.2,null,{from:{o:0,s:.3,r:-20},dur:.5,ease:'back'});
+show('#e2',34.45,null,{from:{o:0,y:30,b:8}});
+show('#e3',34.8,null,{from:{o:0,y:30,s:.8},ease:'back'});
+show('#e4',35.1,null,{from:{o:0,y:10}});
+K('#e3',[[35.5,{}],[35.65,{s:1.06},'out'],[35.85,{s:1},'out']]);
+sfx(33.95,'whoosh');sfx(34.2,'pop');sfx(34.8,'pop',.6);sfx(35.5,'ding',.6);
+window.SFX=SFX;
+</script></body></html>

@@ -1,0 +1,183 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Applivery edit 1</title>
+<link rel="stylesheet" href="base.css">
+<style>
+#hook{left:40px;top:96px;width:640px;padding:26px 30px 30px}
+#hook .l{font-size:76px;display:block}
+#brand{left:0;top:150px;width:720px;text-align:center}
+#brand .icon{width:132px;height:132px;border-radius:32px;display:block;margin:0 auto}
+#brand .word{font-size:132px;margin-top:6px;display:inline-block}
+#v188{left:0;top:560px;width:720px;text-align:center}
+.ph{left:202px;top:130px}
+.side{position:absolute}
+#bigword{left:40px;top:72px;width:640px}
+#bigword .w{position:absolute;left:0;top:30px;font-size:92px}
+#strike{left:40px;top:120px;width:640px;text-align:center;padding:22px 0}
+#strike .t{font-size:96px;position:relative;display:inline-block;color:var(--ink)}
+#strike .bar{position:absolute;left:-10px;right:-10px;top:52%;height:12px;background:var(--red);border-radius:6px;transform-origin:0 50%}
+#files{left:80px;top:96px;width:560px;padding:24px 26px}
+#files .row{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:21px;padding:9px 0;border-top:1px solid var(--line)}
+#files .row b{color:var(--teal);font-weight:600}
+#term{left:60px;top:588px;width:600px;padding:22px 26px;background:#121212;color:#EDEBE5;border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+#term .bar{display:flex;gap:8px;margin-bottom:16px}#term .bar i{width:12px;height:12px;border-radius:50%;background:#3a3a3a}
+#term .ln{font-family:var(--mono);font-size:22px;line-height:1.45}
+#applied{left:110px;top:70px;width:500px}
+#applied img{width:100%;border-radius:22px;box-shadow:0 30px 70px rgba(0,0,0,.22)}
+.badge{position:absolute;padding:10px 18px;border-radius:999px;font-weight:800;font-size:22px;letter-spacing:.02em;color:#fff}
+#end .row{display:flex;align-items:center;justify-content:center;gap:18px}
+#progress{left:0;top:0;height:6px;width:720px;background:var(--teal);transform-origin:0 50%}
+#scan{left:202px;top:130px;width:316px;height:8px;background:linear-gradient(90deg,transparent,var(--teal),transparent);box-shadow:0 0 24px var(--teal)}
+</style></head><body><div id="stage">
+<div id="bg" class="abs"></div>
+
+<!-- S2 phone: home -> kit overview -->
+<div id="ph1" class="abs ph phone"><div class="scr"><img src="../assets/home_pro_light.png"><img id="ph1b" src="../assets/kit_overview_light.png" style="opacity:0"></div></div>
+<div id="scan" class="abs"></div>
+<div id="c_any" class="abs chip" style="left:30px;top:250px"><span class="dot"></span>Any app</div>
+<div id="c_phone" class="abs chip" style="left:440px;top:420px"><span class="dot" style="background:var(--red)"></span>On your phone</div>
+<div id="c_basics" class="abs chip" style="left:24px;top:600px;background:var(--teal);color:#fff;border-color:var(--teal)">→ Design basics</div>
+
+<!-- S4 phone carousel -->
+<div id="ph2" class="abs ph phone" style="top:250px"><div class="scr">
+  <img id="s_type" src="../assets/kit_type_light.png"><img id="s_col" src="../assets/kit_colour_light.png"><img id="s_mot" src="../assets/kit_motion_light.png"><img id="s_ast" src="../assets/export_light.png"></div></div>
+<div id="bigword" class="abs"><div class="kicker" id="bwk">It copies the</div>
+  <div class="w h-big" id="w1">Typography</div><div class="w h-big" id="w2">Colours</div><div class="w h-big" id="w3" style="color:var(--teal)">Motion</div><div class="w h-big" id="w4">Assets</div></div>
+<div id="d_type" class="abs card" style="left:24px;top:520px;padding:16px 20px"><div class="mono" style="font-size:14px;color:var(--ink2)">Type · 7 sizes</div><div style="font-size:56px;font-weight:700;letter-spacing:-.03em">Aa <span class="mono" style="font-size:16px">40·28·20·16</span></div></div>
+<div id="d_col" class="abs card" style="left:420px;top:560px;padding:16px"><div class="mono" style="font-size:14px;color:var(--ink2);margin-bottom:10px">Colour · light+dark</div>
+  <div style="display:flex;border-radius:12px;overflow:hidden"><i style="width:44px;height:52px;background:#0B0B0F"></i><i style="width:44px;height:52px;background:#E8453C"></i><i style="width:44px;height:52px;background:#1C1C24"></i><i style="width:44px;height:52px;background:#F5F2EA"></i><i style="width:44px;height:52px;background:#C6F432"></i></div></div>
+<div id="d_mot" class="abs card" style="left:22px;top:560px;padding:16px 18px;width:250px"><div class="mono" style="font-size:14px;color:var(--ink2);display:flex;justify-content:space-between">Motion<span id="msn">360ms</span></div>
+  <svg viewBox="0 0 210 90" width="210" height="90"><path d="M2 86 H208" stroke="#ddd"/><path id="curve" d="M2 86 C44 86 42 4 208 4" fill="none" stroke="#0F6E63" stroke-width="4" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+  <div class="mono" style="font-size:12px;color:var(--ink2)">cubic-bezier(.2,0,0,1)</div></div>
+<div id="d_ast" class="abs card" style="left:430px;top:600px;padding:16px 18px"><div class="mono" style="font-size:14px;color:var(--ink2)">Assets</div><div style="font-size:24px;font-weight:800;margin-top:4px">icons · images<br>Lottie · fonts</div></div>
+
+<!-- S6 skill -->
+<div id="files" class="abs card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:800;font-size:28px">Reel design kit</div><div class="chip" style="font-size:13px;padding:6px 12px;box-shadow:none">Skill</div></div>
+  <div class="row" id="f1">SKILL.md <b>✓</b></div><div class="row" id="f2">tokens.json <b>✓</b></div><div class="row" id="f3">fonts.json <b>✓</b></div><div class="row" id="f4">motion.md <b>✓</b></div><div class="row" id="f5">screens/ <b>✓</b></div><div class="row" id="f6">assets/ <b>✓</b></div></div>
+<div id="term" class="abs"><div class="bar"><i></i><i></i><i></i><span class="mono" style="font-size:13px;color:#888;margin-left:8px">claude code</span></div>
+  <div class="ln"><span style="color:#E0A07A">›</span> <span id="ty"></span></div><div class="ln" id="tyok" style="color:#7FD1B9;margin-top:6px">● Applying kit · tokens → components → layout</div></div>
+<div id="applied" class="abs"><img src="../assets/livery_applied.png"></div>
+
+<!-- S7 before/after -->
+<div id="bf" class="abs" style="left:28px;top:150px"><div class="mono" style="font-size:16px;margin:0 0 12px 8px;color:var(--ink2)">Before</div>
+  <div class="phone" style="transform:scale(.66);transform-origin:0 0"><div class="scr" id="slopA"></div></div></div>
+<div id="af" class="abs" style="left:372px;top:150px"><div class="mono" style="font-size:16px;margin:0 0 12px 8px;color:var(--teal);font-weight:600">With Applivery</div>
+  <div class="phone" style="transform:scale(.66);transform-origin:0 0"><div class="scr"><img src="../assets/home_dark.png"></div></div></div>
+<div id="stamp" class="abs badge" style="left:58px;top:390px;background:var(--red);font-size:34px;padding:14px 24px;border:4px solid #fff">✕ AI SLOP</div>
+<div id="tick" class="abs badge" style="left:426px;top:390px;background:var(--teal);font-size:30px;padding:14px 24px;border:4px solid #fff">✓ Beautiful</div>
+
+<!-- face -->
+<div id="face"><img id="faceimg"><div class="ring" id="ring"></div></div>
+
+<!-- S0 hook -->
+<div id="hook" class="abs card"><div class="kicker" id="hk">● Just found it</div>
+  <span class="l h-big" id="h1">The craziest</span><span class="l h-big" id="h2">tool for</span><span class="l h-big" id="h3" style="color:var(--teal)">vibe coders</span></div>
+<!-- S1 brand -->
+<div id="brand" class="abs"><div class="kicker" id="bk" style="margin-bottom:26px">The app is called</div><img class="icon" id="bicon" src="../assets/applivery_icon.png"><div class="word h-big" id="bword">applivery</div></div>
+<div id="v188" class="abs"><span class="chip"><span style="background:var(--teal);color:#fff;border-radius:99px;padding:3px 10px;letter-spacing:.04em">New</span>v0.1.88 for Android</span></div>
+<!-- S5 -->
+<div id="strike" class="abs card"><div class="kicker" style="margin-bottom:6px">No more</div><span class="t h-big">Designing<span class="bar" id="sbar"></span></span></div>
+<!-- S8 end -->
+<div id="end" class="abs" style="left:0;top:120px;width:720px;text-align:center">
+  <div class="row" id="e1"><img src="../assets/applivery_icon.png" style="width:92px;height:92px;border-radius:24px"><span class="h-big" style="font-size:96px">applivery</span></div>
+  <div id="e2" class="h-big" style="font-size:58px;margin-top:34px">Copy the feel,<br><span style="color:#A8A49B">not the pixels.</span></div>
+  <div id="e3" style="margin-top:34px"><span style="display:inline-block;background:var(--teal);color:#fff;font-weight:700;font-size:28px;padding:20px 36px;border-radius:999px;box-shadow:0 18px 40px rgba(15,110,99,.35)">↓ Download for Android</span></div>
+  <div id="e4" class="mono" style="margin-top:22px;font-size:20px;color:var(--ink2)">applivery.livery.site · free</div>
+</div>
+<div id="capwrap"><div id="cap"></div></div>
+<div id="progress" class="abs"></div>
+</div>
+<script src="../v1/words.js"></script><script src="slop.js"></script><script src="engine.js"></script>
+<script>
+FACE_DIR='../v1/face';FACE_N=992;window.DURATION=33.06;
+document.getElementById('slopA').innerHTML=SLOP[1];
+CHUNKS=buildChunks(WORDS);
+capHidden=[[2.2,5.95],[16.05,20.6],[31.2,40]];
+
+// ---------- face layout & camera ----------
+const F=(t,l,e)=>[t,{...LAY[l]},e];
+K('#face',[F(0,'full'),F(3.75,'full'),F(4.25,'card'),F(5.9,'card'),F(6.4,'pip'),F(13.55,'pip'),F(13.95,'full'),F(16.05,'full'),F(16.5,'pip'),F(20.55,'pip'),F(20.95,'full'),F(23.25,'full'),F(23.7,'pip'),F(31.15,'pip'),F(31.6,'card')]);
+K('#ring',[[0,{o:0}],[4.0,{o:0}],[4.2,{o:1}],[13.6,{o:1}],[13.8,{o:0}],[16.2,{o:0}],[16.4,{o:1}],[20.6,{o:1}],[20.8,{o:0}],[23.4,{o:0}],[23.6,{o:1}]]);
+K('#faceimg',[[0,{s:1.0}],[3.7,{s:1.12},'inout'],[4.2,{s:1.0}],[6.4,{s:1.35}],[13.6,{s:1.35}],[13.9,{s:1.05}],[14.42,{s:1.06},'lin'],[14.48,{s:1.2},'expo'],[16.05,{s:1.24},'lin'],[16.5,{s:1.35}],[20.6,{s:1.35}],[20.9,{s:1.04}],[22.9,{s:1.1},'inout'],[22.98,{s:1.2},'expo'],[23.6,{s:1.35}],[31.6,{s:1.0}]]);
+K('#bg',[[0,{o:0}],[3.75,{o:0}],[4.0,{o:1},'out'],[13.55,{o:1}],[13.8,{o:0}],[16.05,{o:0}],[16.3,{o:1}],[20.6,{o:1}],[20.85,{o:0}],[23.25,{o:0}],[23.5,{o:1}]]);
+// caption vertical position follows the layout
+K('#capwrap',[[0,{y:1010}],[5.9,{y:1010}],[6.3,{y:880}],[13.55,{y:880}],[13.9,{y:1010}],[23.3,{y:1010}],[23.6,{y:892}],[27.8,{y:892}],[28.1,{y:842}]]);
+K('#progress',[[0,{sx:0}],[33.06,{sx:1},'lin']]);
+
+// ---------- S0 hook ----------
+show('#hook',.15,3.62,{from:{o:0,y:-40,s:.96},exit:{o:0,y:-80}});
+show('#hk',.2,null,{from:{o:0,x:-20,y:0}});
+show('#h1',2.28,null,{from:{o:0,y:30,b:8},dur:.35});
+show('#h2',2.66,null,{from:{o:0,y:30,b:8},dur:.35});
+show('#h3',3.02,null,{from:{o:0,y:30,s:1.25,b:8},dur:.4,ease:'back'});
+sfx(.15,'whoosh',.6);sfx(.2,'pop',.5);sfx(2.28,'tick');sfx(2.66,'tick');sfx(3.02,'boom',.8);
+
+// ---------- S1 brand ----------
+show('#bk',3.95,5.85,{from:{o:0,y:20}});
+show('#bicon',4.55,5.85,{from:{o:0,s:.2,r:-25},dur:.55,ease:'back'});
+K('#bword',[[4.78,{o:0,y:40,cl:0}],[5.2,{o:1,y:0,cl:1}],[5.85,{}],[6.15,{o:0,y:-60},'in']]);
+show('#v188',5.1,5.85,{from:{o:0,y:24,s:.9},ease:'back'});
+sfx(3.75,'whoosh');sfx(4.55,'pop');sfx(4.8,'boom');sfx(5.1,'pop',.5);
+
+// ---------- S2 convert any app ----------
+show('#ph1',6.0,13.5,{from:{o:1,y:1250,r:8},dur:.75,exit:{o:0,y:-60,s:.9}});
+show('#c_any',7.24,13.4,{from:{o:0,x:-40,y:0,s:.8},ease:'back'});
+show('#c_phone',8.92,13.4,{from:{o:0,x:40,y:0,s:.8},ease:'back'});
+K('#scan',[[0,{o:0,y:0}],[11.85,{o:0,y:0}],[11.9,{o:1,y:10}],[12.65,{o:1,y:680},'inout'],[12.8,{o:0}]]);
+K('#ph1b',[[0,{o:0,ct:0}],[11.9,{o:1,ct:0}],[12.65,{ct:1},'inout']]);
+show('#c_basics',12.72,13.4,{from:{o:0,y:30,s:.7},ease:'back'});
+K('#ph1',[[11.6,{}],[11.9,{s:1.04},'out'],[12.7,{s:1}]]);
+sfx(5.9,'whoosh',.7);sfx(6.0,'whoosh');sfx(7.24,'pop');sfx(8.92,'pop');sfx(11.4,'riser',.7);sfx(11.9,'scan');sfx(12.72,'ding');
+
+// ---------- S3 literally copy ----------
+sfx(13.55,'whoosh');sfx(14.46,'boom',.9);
+
+// ---------- S4 typography / colour / motion / assets ----------
+show('#ph2',16.15,20.55,{from:{o:1,y:1100,r:-6},dur:.6});
+show('#bwk',16.15,20.5,{from:{o:0,y:20}});
+const sw=[['#w1','#s_type',16.32],['#w2','#s_col',17.66],['#w3','#s_mot',18.56],['#w4','#s_ast',19.76]];
+sw.forEach(([w,s,a],i)=>{
+  const b=sw[i+1]?sw[i+1][2]:20.5;
+  K(w,[[a,{o:0,y:60,b:10}],[a+.4,{o:1,y:0,b:0}],[b,{}],[b+.18,{o:0,y:-50,b:6},'in']]);
+  if(i>0) K(s,[[a,{x:330}],[a+.45,{x:0}]]);
+  sfx(a,'swipe',.8);sfx(a+.05,'pop',.45);
+});
+show('#d_type',16.5,17.6,{from:{o:0,x:-60,y:0,r:-6},ease:'back'});
+show('#d_col',17.8,18.5,{from:{o:0,x:60,y:0,r:6},ease:'back'});
+show('#d_mot',18.7,19.7,{from:{o:0,x:-60,y:0,r:-6},ease:'back'});
+show('#d_ast',19.9,20.5,{from:{o:0,x:60,y:0,r:6},ease:'back'});
+HOOKS.push(t=>{$('#curve').style.strokeDashoffset=1-Ease.inout(clamp((t-18.8)/.7))});
+K('#ph2',[[19.5,{}],[20.1,{s:1.02}]]);
+
+// ---------- S5 no more designing ----------
+show('#strike',21.0,23.2,{from:{o:0,y:-40}});
+K('#sbar',[[0,{sx:0}],[22.95,{sx:0}],[23.15,{sx:1},'out']]);
+sfx(20.6,'whoosh');sfx(21.0,'pop',.5);sfx(22.95,'strike');
+
+// ---------- S6 skill -> Claude -> applied ----------
+show('#files',23.5,26.75,{from:{o:0,y:60},exit:{o:0,y:-80,s:.9}});
+['#f1','#f2','#f3','#f4','#f5','#f6'].forEach((f,i)=>{show(f,23.75+i*.17,null,{from:{o:0,x:-30,y:0},dur:.3});sfx(23.75+i*.17,'tick',.55)});
+show('#term',25.55,31.0,{from:{o:0,y:120},dur:.55,exit:{o:0,y:60}});
+typer('#ty','make my app look like this kit',26.15,30);
+show('#tyok',27.3,null,{from:{o:0,y:10}});
+show('#applied',26.85,27.62,{from:{o:0,y:80,s:.85},ease:'back',exit:{o:0,s:.9,y:-40}});
+K('#term',[[27.75,{}],[28.1,{o:0,y:80},'in']]);
+sfx(23.25,'whoosh');sfx(25.55,'pop');sfx(26.15,'type');sfx(26.85,'whoosh',.7);sfx(27.3,'ding',.5);
+
+// ---------- S7 before / after ----------
+show('#bf',27.9,31.1,{from:{o:0,x:-200,y:0,r:-8}});
+show('#af',28.0,31.1,{from:{o:0,x:200,y:0,r:8}});
+K('#af',[[28.84,{}],[29.1,{s:1.06},'back'],[29.6,{s:1}]]);
+show('#tick',28.86,31.1,{from:{o:0,s:2.2,r:-10},dur:.35,ease:'back',rest:{r:4}});
+show('#stamp',30.36,31.1,{from:{o:0,s:2.6,r:12},dur:.22,ease:'out',rest:{r:-6}});
+K('#bf',[[30.36,{}],[30.42,{x:-10},'lin'],[30.48,{x:10},'lin'],[30.54,{x:-6},'lin'],[30.6,{x:0},'lin']]);
+HOOKS.push(t=>{$('#slopA').style.filter=t>30.4?`grayscale(${clamp((t-30.4)/.4)})`:''});
+sfx(27.9,'whoosh');sfx(28.86,'ding');sfx(30.36,'stamp');
+
+// ---------- S8 end ----------
+show('#e1',31.25,null,{from:{o:0,y:-40,s:.9},ease:'back'});
+show('#e2',31.5,null,{from:{o:0,y:30,b:8}});
+show('#e3',31.8,null,{from:{o:0,y:30,s:.8},ease:'back'});
+show('#e4',32.05,null,{from:{o:0,y:10}});
+K('#e3',[[32.4,{}],[32.55,{s:1.06},'out'],[32.75,{s:1},'out']]);
+sfx(31.15,'whoosh');sfx(31.25,'pop');sfx(31.8,'pop',.6);sfx(32.4,'ding',.6);
+window.SFX=SFX;
+</script></body></html>
